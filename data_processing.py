@@ -2,9 +2,9 @@ import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 from scipy.stats import norm, skew  # for some statistics
 
 
-def read_input():
-    train = pd.read_csv('input/train.csv')
-    test = pd.read_csv('input/test.csv')
+def read_input(train_path, test_path):
+    train = pd.read_csv(train_path)
+    test = pd.read_csv(test_path)
     return train, test
 
 
@@ -19,6 +19,7 @@ def drop_id(train, test):
     # Drop the  'Id' column since it's unnecessary for  the prediction process.
     train.drop("Id", axis=1, inplace=True)
     test.drop("Id", axis=1, inplace=True)
+    return train, test
 
 
 def delete_outliers(train):
@@ -29,12 +30,12 @@ def delete_outliers(train):
 
 def concat_data(train, test):
     # Concat train & test data
-    ntrain = train.shape[0]
-    ntest = test.shape[0]
+    n_train = train.shape[0]
+    n_test = test.shape[0]
     y_train = train.SalePrice.values
     all_data = pd.concat((train, test)).reset_index(drop=True)
     all_data.drop(['SalePrice'], axis=1, inplace=True)
-    return all_data, y_train, ntrain, ntest
+    return all_data, y_train, n_train, n_test
 
 
 def show_missing_values(all_data):
@@ -162,8 +163,4 @@ def getting_new_train_test(all_data, ntrain):
     train = all_data[:ntrain]
     test = all_data[ntrain:]
     return all_data, train, test
-
-
-
-
 

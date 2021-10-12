@@ -1,27 +1,106 @@
-import data_processing as dp
-import numpy as np
+# This is a sample Python script.
+
+# Press Shift+F10 to execute it or replace it with your code.
+# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+
+# import some necessary librairies
+import inline as inline
+import jupyter as jupyter
+import matplotlib
+import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
+
+import matplotlib.pyplot as plt  # Matlab-style plotting
+import seaborn as sns
+
+color = sns.color_palette()
+sns.set_style('darkgrid')
+import warnings
+
+
+def ignore_warn(*args, **kwargs):
+    pass
+
+
+warnings.warn = ignore_warn  # ignore annoying warning (from sklearn and seaborn)
+
+from scipy import stats
+from scipy.stats import norm, skew  # for some statistics
 
 pd.set_option('display.float_format', lambda x: '{:.3f}'.format(x))  # Limiting floats output to 3 decimal points
 
-# DATA PROCESSING ############
+from subprocess import check_output
 
-train, test = dp.read_input(train_path='input/train.csv', test_path='input/test.csv')
+# print(check_output(["ls", "../input/"]).decode("utf8"))  # check the files available in the directory
+import os
 
-train_id, test_id = dp.get_id(train, test)
+print(os.listdir('input'))
 
-train, test = dp.drop_id(train, test)
+# Now let's import and put the train and test datasets in  pandas dataframe
 
-train = dp.delete_outliers(train)  # optional optimizations ???
+train = pd.read_csv('input/train.csv')
+test = pd.read_csv('input/test.csv')
 
-# We use the numpy function log1p which  applies log(1+x) to all elements of the column
+# display the first five rows of the train dataset.
+print(train.head(5))
+
+print(test.head(5))
+
+# check the numbers of samples and features
+print("The train data size before dropping Id feature is : {} ".format(train.shape))
+print("The test data size before dropping Id feature is : {} ".format(test.shape))
+
+# Save the 'Id' column
+train_ID = train['Id']
+test_ID = test['Id']
+
+# Now drop the  'Id' column since it's unnecessary for  the prediction process.
+train.drop("Id", axis=1, inplace=True)
+test.drop("Id", axis=1, inplace=True)
+
+# check again the data size after dropping the 'Id' variable
+print("\nThe train data size after dropping Id feature is : {} ".format(train.shape))
+print("The test data size after dropping Id feature is : {} ".format(test.shape))
+
+# fig, ax = plt.subplots()
+# ax.scatter(x=train['GrLivArea'], y=train['SalePrice'])
+# plt.ylabel('SalePrice', fontsize=13)
+# plt.xlabel('GrLivArea', fontsize=13)
+# plt.show()
+
+# Deleting outliers
+train = train.drop(train[(train['GrLivArea'] > 4000) & (train['SalePrice'] < 300000)].index)
+
+# Check the graphic again
+# fig, ax = plt.subplots()
+# ax.scatter(train['GrLivArea'], train['SalePrice'])
+# plt.ylabel('SalePrice', fontsize=13)
+# plt.xlabel('GrLivArea', fontsize=13)
+# plt.show()
+
+# We use the numpy fuction log1p which  applies log(1+x) to all elements of the column
+# print(train["SalePrice"])
 train["SalePrice"] = np.log1p(train["SalePrice"])  # np.log_e(1+x), e= 2.71828182846
+# print(train["SalePrice"])
+
+# sns.distplot(train['SalePrice'], fit=norm)
+
+# Get the fitted parameters used by the function
+# (mu, sigma) = norm.fit(train['SalePrice'])
+# print('\n mu = {:.2f} and sigma = {:.2f}\n'.format(mu, sigma))
+
+# Now plot the distribution
+# plt.legend(['Normal dist. ($\mu=$ {:.2f} and $\sigma=$ {:.2f} )'.format(mu, sigma)], loc='best')
+# plt.ylabel('Frequency')
+# plt.title('SalePrice distribution')
+
+# Get also the QQ-plot
+# fig = plt.figure()
+# res = stats.probplot(train['SalePrice'], plot=plt)
+# plt.show()
+
 
 # Concat train & test data
-all_data, y_train, n_train, n_test = dp.concat_data(train, test)
-
-
-
 ntrain = train.shape[0]
 ntest = test.shape[0]
 y_train = train.SalePrice.values
