@@ -5,6 +5,8 @@ import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 pd.set_option('display.float_format', lambda x: '{:.3f}'.format(x))  # Limiting floats output to 3 decimal points
 
 # DATA PROCESSING ############
+def data_processing():
+
 
 train, test = dp.read_input(train_path='input/train.csv', test_path='input/test.csv')
 
