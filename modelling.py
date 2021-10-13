@@ -127,4 +127,4 @@ def run_predict_models(stacked_averaged_models, model_xgb, model_lgb, test, test
     sub = pd.DataFrame()
     sub['Id'] = test_ID
     sub['SalePrice'] = ensemble
-    sub.to_csv('submission_1.csv', index=False)
+    sub.to_csv('submission.csv', index=False)

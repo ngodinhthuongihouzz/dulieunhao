@@ -24,7 +24,7 @@ def drop_id(train, test):
 
 def delete_outliers(train):
     # Deleting outliers
-    train.drop(train[(train['GrLivArea'] > 4000) & (train['SalePrice'] < 300000)].index)
+    train = train.drop(train[(train['GrLivArea'] > 4000) & (train['SalePrice'] < 300000)].index)
     return train
 
 
@@ -118,7 +118,7 @@ def label_encoding(all_data):
 
 def transform_numerical_to_categorical_values(all_data):
     all_data = convert_num_to_string_values(all_data)
-    label_encoding(all_data)
+    all_data = label_encoding(all_data)
     return all_data
 
 
@@ -157,10 +157,10 @@ def box_cox_transform_skewed_features(all_data):
     return all_data
 
 
-def getting_new_train_test(all_data, ntrain):
+def getting_new_train_test(all_data, n_train):
     all_data = pd.get_dummies(all_data)
     print(all_data.shape)
-    train = all_data[:ntrain]
-    test = all_data[ntrain:]
+    train = all_data[:n_train]
+    test = all_data[n_train:]
     return all_data, train, test
 
