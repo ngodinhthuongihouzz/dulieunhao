@@ -3,7 +3,9 @@ Dữ liệu nhà ở
   - data_description.txt: Diễn tả nghĩa của các cột dữ liệu
   - train.csv: 
   - test.csv:
+- Output:
   - sample_submission.csv: 
+  - 
 - Work flow: 
   - Data Processing
   - Modelling
