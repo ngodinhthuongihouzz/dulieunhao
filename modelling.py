@@ -111,11 +111,27 @@ def train_models(train, y_train):
     return stacked_averaged_models, model_xgb, model_lgb
 
 
+# save/load xgboost model: https://stackoverflow.com/questions/43691380/how-to-save-load-xgboost-model
+# save/load lightgbm model:
+# https://stackoverflow.com/questions/55208734/save-lgbmregressor-model-from-python-lightgbm-package-to-disc
+# save/load stacked averaged models:
+def save_models():
+    model_xgb.save_model("saved_models/model_xgb.model")
+    model_lgb.booster_.save_model("saved_models/model_lgb.txt")
+
+
+def load_models():
+    loaded_model_xgb = xgb.XGBRegressor()
+    loaded_model_xgb.load_model("saved_models/model_xgb.model")
+    loaded_model_lgb = lgb.Booster(model_file="saved_models/model_lgb.txt")
+    return loaded_model_xgb, loaded_model_lgb
+
+
 def test_models(stacked_averaged_models, model_xgb, model_lgb, train, y_train):
     stacked_train_pred = stacked_averaged_models.predict(train.values)
     xgb_train_pred = model_xgb.predict(train)
     lgb_train_pred = model_lgb.predict(train)
-    print('RMSLE score on train data:')
+    print('RMSLE score on train data [mean squared error regression loss]: ')
     print(rmsle(y_train, stacked_train_pred * 0.70 + xgb_train_pred * 0.15 + lgb_train_pred * 0.15))
 
 

@@ -45,6 +45,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\input\test\test2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\test\test3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\train.csv">
           <value>
             <Attribute>
@@ -60,6 +74,20 @@
           </value>
         </entry>
         <entry key="\input\train3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\train\train2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\train\train3.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

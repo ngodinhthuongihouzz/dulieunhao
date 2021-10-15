@@ -8,7 +8,10 @@ if __name__ == '__main__':
     # DATA PROCESSING ############
     import data_processing as dp
 
-    train, test = dp.read_input(train_path='input/train3.csv', test_path='input/test3.csv')
+    train, test = dp.read_multiple_inputs(train_paths=dp.get_all_csv_in_directory('input/train/*.csv'),
+                                          test_paths=dp.get_all_csv_in_directory('input/test/*.csv'))
+
+    # train, test = dp.read_input(train_path='input/train.csv', test_path='input/test.csv')
 
     train_id, test_id = dp.get_id(train, test)
 
@@ -48,6 +51,5 @@ if __name__ == '__main__':
 
     # Predict
     mlg.run_predict_models(stacked_averaged_models, model_xgb, model_lgb, test, test_id)
-
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

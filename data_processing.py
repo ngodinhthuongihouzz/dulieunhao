@@ -8,6 +8,24 @@ def read_input(train_path, test_path):
     return train, test
 
 
+def read_multiple_inputs(train_paths, test_paths):
+    train = pd.DataFrame()
+    for train_path in train_paths:
+        train_i = pd.read_csv(train_path)
+        train = train.append(train_i, ignore_index=True)
+
+    test = pd.DataFrame()
+    for test_path in test_paths:
+        test_i = pd.read_csv(test_path)
+        test = test.append(test_i, ignore_index=True)
+    return train, test
+
+
+def get_all_csv_in_directory(dir_path):
+    import glob
+    return glob.glob(dir_path)
+
+
 def get_id(train, test):
     # Save the 'Id' column
     train_id = train['Id']
@@ -163,4 +181,3 @@ def getting_new_train_test(all_data, n_train):
     train = all_data[:n_train]
     test = all_data[n_train:]
     return all_data, train, test
-
