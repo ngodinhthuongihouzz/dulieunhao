@@ -1,8 +1,11 @@
 import numpy as np
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
+from timeit import default_timer as timer
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    start = timer()
+
     pd.set_option('display.float_format', lambda x: '{:.3f}'.format(x))  # Limiting floats output to 3 decimal points
 
     # DATA PROCESSING ############
@@ -44,12 +47,23 @@ if __name__ == '__main__':
     import modelling as mlg
 
     # Train
+    start_train = timer()
     stacked_averaged_models, model_xgb, model_lgb = mlg.train_models(train, y_train)
+    print("Train time: ", timer() - start_train)
+
+    # Save trained models
+    mlg.save_models(stacked_averaged_models.base_models_, stacked_averaged_models.meta_model_)
+
+    # Load trained models
+    # model_xgb, model_lgb, stacked_averaged_models = mlg.load_models()
 
     # Test
     mlg.test_models(stacked_averaged_models, model_xgb, model_lgb, train, y_train)
 
     # Predict
     mlg.run_predict_models(stacked_averaged_models, model_xgb, model_lgb, test, test_id)
+
+    # Time calculate
+    print("Total time: ", timer() - start)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

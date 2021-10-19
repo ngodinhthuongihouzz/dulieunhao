@@ -12,35 +12,39 @@ import xgboost as xgb
 import lightgbm as lgb
 
 
-class AveragingModels(BaseEstimator, RegressorMixin, TransformerMixin):
-    def __init__(self, models):
-        self.models = models
-
-    # we define clones of the original models to fit the data in
-    def fit(self, X, y):
-        self.models_ = [clone(x) for x in self.models]
-
-        # Train cloned base models
-        for model in self.models_:
-            model.fit(X, y)
-
-        return self
-
-    # Now we do the predictions for cloned models and average them
-    def predict(self, X):
-        predictions = np.column_stack([model.predict(X) for model in self.models_])
-        return np.mean(predictions, axis=1)
+#
+# class AveragingModels(BaseEstimator, RegressorMixin, TransformerMixin):
+#     def __init__(self, models):
+#         self.models = models
+#
+#     # we define clones of the original models to fit the data in
+#     def fit(self, X, y):
+#         self.models_ = [clone(x) for x in self.models]
+#
+#         # Train cloned base models
+#         for model in self.models_:
+#             model.fit(X, y)
+#
+#         return self
+#
+#     # Now we do the predictions for cloned models and average them
+#     def predict(self, X):
+#         predictions = np.column_stack([model.predict(X) for model in self.models_])
+#         return np.mean(predictions, axis=1)
 
 
 class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
+
     def __init__(self, base_models, meta_model, n_folds=5):
+        # base models: ENet, GBoost, KRR
         self.base_models = base_models
+        # meta models: lasso
         self.meta_model = meta_model
         self.n_folds = n_folds
 
     # We again fit the data on clones of the original models
     def fit(self, X, y):
-        self.base_models_ = [list() for x in self.base_models]
+        self.base_models_ = [list() for x in self.base_models]  # convert tuple base_models to list base_models_
         self.meta_model_ = clone(self.meta_model)
         kfold = KFold(n_splits=self.n_folds, shuffle=True, random_state=156)
 
@@ -57,7 +61,12 @@ class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Now train the cloned  meta-model using the out-of-fold predictions as new feature
         self.meta_model_.fit(out_of_fold_predictions, y)
+
         return self
+
+    def load(self, base_models_, meta_model_):
+        self.base_models_ = base_models_
+        self.meta_model_ = meta_model_
 
     # Do the predictions of all base models on the test data and use the averaged predictions as
     # meta-features for the final prediction which is done by the meta-model
@@ -114,17 +123,28 @@ def train_models(train, y_train):
 # save/load xgboost model: https://stackoverflow.com/questions/43691380/how-to-save-load-xgboost-model
 # save/load lightgbm model:
 # https://stackoverflow.com/questions/55208734/save-lgbmregressor-model-from-python-lightgbm-package-to-disc
-# save/load stacked averaged models:
-def save_models():
+# save stacked averaged models:
+# https://stackoverflow.com/questions/34143829/sklearn-how-to-save-a-model-created-from-a-pipeline-and-gridsearchcv-using-jobli
+# load stacked averaged models:
+# https://machinelearningmastery.com/save-load-machine-learning-models-python-scikit-learn/
+def save_models(base_models_, meta_model_):
     model_xgb.save_model("saved_models/model_xgb.model")
     model_lgb.booster_.save_model("saved_models/model_lgb.txt")
+    import joblib
+    joblib.dump(base_models_, "saved_models/base_models_.pkl")
+    joblib.dump(meta_model_, "saved_models/meta_model_.pkl")
 
 
 def load_models():
     loaded_model_xgb = xgb.XGBRegressor()
     loaded_model_xgb.load_model("saved_models/model_xgb.model")
     loaded_model_lgb = lgb.Booster(model_file="saved_models/model_lgb.txt")
-    return loaded_model_xgb, loaded_model_lgb
+    import joblib
+    base_models_ = joblib.load("saved_models/base_models_.pkl")
+    meta_model_ = joblib.load("saved_models/meta_model_.pkl")
+    stacked_averaged_models = StackingAveragedModels(base_models=(ENet, GBoost, KRR), meta_model=lasso)
+    stacked_averaged_models.load(base_models_, meta_model_)
+    return loaded_model_xgb, loaded_model_lgb, stacked_averaged_models
 
 
 def test_models(stacked_averaged_models, model_xgb, model_lgb, train, y_train):
