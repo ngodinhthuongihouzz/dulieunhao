@@ -65,5 +65,3 @@ if __name__ == '__main__':
 
     # Time calculate
     print("Total time: ", timer() - start)
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

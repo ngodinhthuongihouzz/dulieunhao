@@ -128,20 +128,20 @@ def train_models(train, y_train):
 # load stacked averaged models:
 # https://machinelearningmastery.com/save-load-machine-learning-models-python-scikit-learn/
 def save_models(base_models_, meta_model_):
-    model_xgb.save_model("saved_models/model_xgb.model")
-    model_lgb.booster_.save_model("saved_models/model_lgb.txt")
+    model_xgb.save_model("output/saved_models/model_xgb.model")
+    model_lgb.booster_.save_model("output/saved_models/model_lgb.txt")
     import joblib
-    joblib.dump(base_models_, "saved_models/base_models_.pkl")
-    joblib.dump(meta_model_, "saved_models/meta_model_.pkl")
+    joblib.dump(base_models_, "output/saved_models/base_models_.pkl")
+    joblib.dump(meta_model_, "output/saved_models/meta_model_.pkl")
 
 
 def load_models():
     loaded_model_xgb = xgb.XGBRegressor()
-    loaded_model_xgb.load_model("saved_models/model_xgb.model")
-    loaded_model_lgb = lgb.Booster(model_file="saved_models/model_lgb.txt")
+    loaded_model_xgb.load_model("output/saved_models/model_xgb.model")
+    loaded_model_lgb = lgb.Booster(model_file="output/saved_models/model_lgb.txt")
     import joblib
-    base_models_ = joblib.load("saved_models/base_models_.pkl")
-    meta_model_ = joblib.load("saved_models/meta_model_.pkl")
+    base_models_ = joblib.load("output/saved_models/base_models_.pkl")
+    meta_model_ = joblib.load("output/saved_models/meta_model_.pkl")
     stacked_averaged_models = StackingAveragedModels(base_models=(ENet, GBoost, KRR), meta_model=lasso)
     stacked_averaged_models.load(base_models_, meta_model_)
     return loaded_model_xgb, loaded_model_lgb, stacked_averaged_models
@@ -163,4 +163,4 @@ def run_predict_models(stacked_averaged_models, model_xgb, model_lgb, test, test
     sub = pd.DataFrame()
     sub['Id'] = test_ID
     sub['SalePrice'] = ensemble
-    sub.to_csv('submission.csv', index=False)
+    sub.to_csv('output/submission.csv', index=False)

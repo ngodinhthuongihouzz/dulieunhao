@@ -108,6 +108,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\output\submission.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\submission.csv">
           <value>
             <Attribute>
