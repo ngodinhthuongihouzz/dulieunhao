@@ -48,7 +48,8 @@ if __name__ == '__main__':
 
     # Train
     start_train = timer()
-    stacked_averaged_models, model_xgb, model_lgb = mlg.train_models(train, y_train)
+    # stacked_averaged_models, model_xgb, model_lgb = mlg.train_models(train, y_train)
+    stacked_averaged_models, model_xgb, model_lgb = mlg.train_models_fast(train, y_train)
     print("Train time: ", timer() - start_train)
 
     # Save trained models

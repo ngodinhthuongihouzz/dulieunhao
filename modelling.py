@@ -111,6 +111,49 @@ model_lgb = lgb.LGBMRegressor(objective='regression', num_leaves=5,
                               feature_fraction_seed=9, bagging_seed=9,
                               min_data_in_leaf=6, min_sum_hessian_in_leaf=11)
 
+import multiprocessing
+
+
+def train_models_fast(train, y_train):
+    processes = []
+    return_stacked_averaged_models = None
+    stacked_avg_train_process = multiprocessing.Process(target=train_stacked_averaged_model,
+                                                        args=(train, y_train, return_stacked_averaged_models, ))
+    processes.append(stacked_avg_train_process)
+    stacked_avg_train_process.start()
+
+    return_model_xgb = None
+    xgb_train_process = multiprocessing.Process(target=train_xgb_model,
+                                                args=(train, y_train, return_model_xgb, ))
+    processes.append(xgb_train_process)
+    xgb_train_process.start()
+
+    return_model_lgb = None
+    lgb_train_process = multiprocessing.Process(target=train_lgb_model,
+                                                args=(train, y_train, return_model_lgb, ))
+    processes.append(lgb_train_process)
+    lgb_train_process.start()
+
+    for process in processes:
+        process.join()
+    return return_stacked_averaged_models, return_model_xgb, return_model_lgb
+
+
+def train_stacked_averaged_model(train, y_train, return_stacked_averaged_models):
+    stacked_averaged_models = StackingAveragedModels(base_models=(ENet, GBoost, KRR), meta_model=lasso)
+    stacked_averaged_models.fit(train.values, y_train)
+    return_stacked_averaged_models = stacked_averaged_models
+
+
+def train_xgb_model(train, y_train, return_model_xgb):
+    model_xgb.fit(train, y_train)
+    return_model_xgb = model_xgb
+
+
+def train_lgb_model(train, y_train, return_model_lgb):
+    model_lgb.fit(train, y_train)
+    return_model_lgb = model_lgb
+
 
 def train_models(train, y_train):
     stacked_averaged_models = StackingAveragedModels(base_models=(ENet, GBoost, KRR), meta_model=lasso)
