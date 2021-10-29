@@ -14,14 +14,16 @@ if __name__ == '__main__':
     train, test = dp.read_multiple_inputs(train_paths=dp.get_all_csv_in_directory('input/train/*.csv'),
                                           test_paths=dp.get_all_csv_in_directory('input/test/*.csv'))
 
-    # train, test = dp.read_input(train_path='input/train.csv', test_path='input/test.csv')
+    # train, test = dp.read_input(train_path='input/train.csv', test_path='input/record1.csv')
 
     train_id, test_id = dp.get_id(train, test)
 
     train, test = dp.drop_id(train, test)
 
-    train = dp.delete_outliers(train)  # optional optimizations ???
+    # train = dp.delete_outliers(train)  # optional ???
 
+    # check column exists in data-frame:
+    # https://stackoverflow.com/questions/24870306/how-to-check-if-a-column-exists-in-pandas
     # We use the numpy function log1p which  applies log(1+x) to all elements of the column
     train["SalePrice"] = np.log1p(train["SalePrice"])  # np.log_e(1+x), e= 2.71828182846
 
@@ -29,13 +31,14 @@ if __name__ == '__main__':
     all_data, y_train, n_train, n_test = dp.concat_data(train, test)
 
     # Imputing missing values
-    all_data = dp.imputing_missing_values(all_data)
+    # all_data = dp.imputing_missing_values(all_data)  # optional ???
 
     # Transforming some numerical variables that are really categorical
-    all_data = dp.transform_numerical_to_categorical_values(all_data)
+    # all_data = dp.transform_numerical_to_categorical_values(all_data)
+    all_data = dp.transform_numerical_to_categorical_values_test(all_data)  # customize manually
 
     # Adding total sq_footage feature
-    all_data = dp.add_more_features(all_data)
+    # all_data = dp.add_more_features(all_data)  # optional ???
 
     # SKEWED FEATURES
     all_data = dp.box_cox_transform_skewed_features(all_data)
@@ -48,21 +51,22 @@ if __name__ == '__main__':
 
     # Train
     start_train = timer()
-    # stacked_averaged_models, model_xgb, model_lgb = mlg.train_models(train, y_train)
-    stacked_averaged_models, model_xgb, model_lgb = mlg.train_models_fast(train, y_train)
+    trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb = mlg.train_models(train, y_train)
+    # trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb = mlg.train_models_faster(train, y_train)
     print("Train time: ", timer() - start_train)
 
     # Save trained models
-    mlg.save_models(stacked_averaged_models.base_models_, stacked_averaged_models.meta_model_)
+    mlg.save_models(trained_model_xgb, trained_model_lgb, trained_stacked_averaged_models.base_models_,
+                    trained_stacked_averaged_models.meta_model_)
 
     # Load trained models
-    # model_xgb, model_lgb, stacked_averaged_models = mlg.load_models()
+    # trained_model_xgb, trained_model_lgb, trained_stacked_averaged_models = mlg.load_models()
 
     # Test
-    mlg.test_models(stacked_averaged_models, model_xgb, model_lgb, train, y_train)
+    # mlg.test_models(trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, train, y_train)
 
     # Predict
-    mlg.run_predict_models(stacked_averaged_models, model_xgb, model_lgb, test, test_id)
+    mlg.run_predict_models('output/submission.csv', trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, test, test_id)
 
     # Time calculate
     print("Total time: ", timer() - start)

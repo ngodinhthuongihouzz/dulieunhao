@@ -114,45 +114,47 @@ model_lgb = lgb.LGBMRegressor(objective='regression', num_leaves=5,
 import multiprocessing
 
 
-def train_models_fast(train, y_train):
+def train_models_faster(train, y_train):
+    if multiprocessing.cpu_count() < 3:
+        raise Exception("[RE-AVM Error] CPU limited (< 3)")
+
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+
     processes = []
-    return_stacked_averaged_models = None
     stacked_avg_train_process = multiprocessing.Process(target=train_stacked_averaged_model,
-                                                        args=(train, y_train, return_stacked_averaged_models, ))
+                                                        args=(train, y_train, return_dict,))
     processes.append(stacked_avg_train_process)
-    stacked_avg_train_process.start()
 
-    return_model_xgb = None
-    xgb_train_process = multiprocessing.Process(target=train_xgb_model,
-                                                args=(train, y_train, return_model_xgb, ))
+    xgb_train_process = multiprocessing.Process(target=train_xgb_model, args=(train, y_train, return_dict,))
     processes.append(xgb_train_process)
-    xgb_train_process.start()
 
-    return_model_lgb = None
-    lgb_train_process = multiprocessing.Process(target=train_lgb_model,
-                                                args=(train, y_train, return_model_lgb, ))
+    lgb_train_process = multiprocessing.Process(target=train_lgb_model, args=(train, y_train, return_dict,))
     processes.append(lgb_train_process)
+
+    stacked_avg_train_process.start()
+    xgb_train_process.start()
     lgb_train_process.start()
 
     for process in processes:
         process.join()
-    return return_stacked_averaged_models, return_model_xgb, return_model_lgb
+    return return_dict["trained_stacked_averaged_models"], return_dict["trained_model_xgb"], return_dict["trained_model_lgb"]
 
 
-def train_stacked_averaged_model(train, y_train, return_stacked_averaged_models):
+def train_stacked_averaged_model(train, y_train, return_dict):
     stacked_averaged_models = StackingAveragedModels(base_models=(ENet, GBoost, KRR), meta_model=lasso)
     stacked_averaged_models.fit(train.values, y_train)
-    return_stacked_averaged_models = stacked_averaged_models
+    return_dict["trained_stacked_averaged_models"] = stacked_averaged_models
 
 
-def train_xgb_model(train, y_train, return_model_xgb):
+def train_xgb_model(train, y_train, return_dict):
     model_xgb.fit(train, y_train)
-    return_model_xgb = model_xgb
+    return_dict["trained_model_xgb"] = model_xgb
 
 
-def train_lgb_model(train, y_train, return_model_lgb):
+def train_lgb_model(train, y_train, return_dict):
     model_lgb.fit(train, y_train)
-    return_model_lgb = model_lgb
+    return_dict["trained_model_lgb"] = model_lgb
 
 
 def train_models(train, y_train):
@@ -170,40 +172,42 @@ def train_models(train, y_train):
 # https://stackoverflow.com/questions/34143829/sklearn-how-to-save-a-model-created-from-a-pipeline-and-gridsearchcv-using-jobli
 # load stacked averaged models:
 # https://machinelearningmastery.com/save-load-machine-learning-models-python-scikit-learn/
-def save_models(base_models_, meta_model_):
-    model_xgb.save_model("output/saved_models/model_xgb.model")
-    model_lgb.booster_.save_model("output/saved_models/model_lgb.txt")
+def save_models(trained_model_xgb, trained_model_lgb, trained_base_models_, trained_meta_model_):
+    trained_model_xgb.save_model("output/saved_models/trained_model_xgb.model")
+    trained_model_lgb.booster_.save_model("output/saved_models/trained_model_lgb.txt")
     import joblib
-    joblib.dump(base_models_, "output/saved_models/base_models_.pkl")
-    joblib.dump(meta_model_, "output/saved_models/meta_model_.pkl")
+    joblib.dump(trained_base_models_, "output/saved_models/trained_base_models_.pkl")
+    joblib.dump(trained_meta_model_, "output/saved_models/trained_meta_model_.pkl")
 
 
 def load_models():
-    loaded_model_xgb = xgb.XGBRegressor()
-    loaded_model_xgb.load_model("output/saved_models/model_xgb.model")
-    loaded_model_lgb = lgb.Booster(model_file="output/saved_models/model_lgb.txt")
+    loaded_trained_model_xgb = xgb.XGBRegressor()
+    loaded_trained_model_xgb.load_model("output/saved_models/trained_model_xgb.model")
+    loaded_trained_model_lgb = lgb.Booster(model_file="output/saved_models/trained_model_lgb.txt")
     import joblib
-    base_models_ = joblib.load("output/saved_models/base_models_.pkl")
-    meta_model_ = joblib.load("output/saved_models/meta_model_.pkl")
-    stacked_averaged_models = StackingAveragedModels(base_models=(ENet, GBoost, KRR), meta_model=lasso)
-    stacked_averaged_models.load(base_models_, meta_model_)
-    return loaded_model_xgb, loaded_model_lgb, stacked_averaged_models
+    trained_base_models_ = joblib.load("output/saved_models/trained_base_models_.pkl")
+    trained_meta_model_ = joblib.load("output/saved_models/trained_meta_model_.pkl")
+    loaded_trained_stacked_averaged_models = StackingAveragedModels(base_models=(ENet, GBoost, KRR), meta_model=lasso)
+    loaded_trained_stacked_averaged_models.load(trained_base_models_, trained_meta_model_)
+    return loaded_trained_model_xgb, loaded_trained_model_lgb, loaded_trained_stacked_averaged_models
 
 
-def test_models(stacked_averaged_models, model_xgb, model_lgb, train, y_train):
-    stacked_train_pred = stacked_averaged_models.predict(train.values)
-    xgb_train_pred = model_xgb.predict(train)
-    lgb_train_pred = model_lgb.predict(train)
+def test_models(trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, train, y_train):
+    stacked_train_pred = trained_stacked_averaged_models.predict(train.values)
+    xgb_train_pred = trained_model_xgb.predict(train)
+    lgb_train_pred = trained_model_lgb.predict(train)
     print('RMSLE score on train data [mean squared error regression loss]: ')
     print(rmsle(y_train, stacked_train_pred * 0.70 + xgb_train_pred * 0.15 + lgb_train_pred * 0.15))
 
 
-def run_predict_models(stacked_averaged_models, model_xgb, model_lgb, test, test_ID):
-    stacked_pred = np.expm1(stacked_averaged_models.predict(test.values))
-    xgb_pred = np.expm1(model_xgb.predict(test))
-    lgb_pred = np.expm1(model_lgb.predict(test.values))
+def run_predict_models(out_path, trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, test, test_ID):
+    stacked_pred = np.expm1(trained_stacked_averaged_models.predict(test.values))
+    xgb_pred = np.expm1(trained_model_xgb.predict(test))
+    lgb_pred = np.expm1(trained_model_lgb.predict(test.values))
     ensemble = stacked_pred * 0.70 + xgb_pred * 0.15 + lgb_pred * 0.15
     sub = pd.DataFrame()
     sub['Id'] = test_ID
     sub['SalePrice'] = ensemble
-    sub.to_csv('output/submission.csv', index=False)
+    sub.to_csv(out_path, index=False)
+
+

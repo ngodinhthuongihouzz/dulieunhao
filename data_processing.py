@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 from scipy.stats import norm, skew  # for some statistics
 
@@ -19,6 +20,10 @@ def read_multiple_inputs(train_paths, test_paths):
         test_i = pd.read_csv(test_path)
         test = test.append(test_i, ignore_index=True)
     return train, test
+
+
+def read_single_predict_input(predict_path):
+    return pd.read_csv(predict_path)
 
 
 def get_all_csv_in_directory(dir_path):
@@ -115,6 +120,14 @@ def convert_num_to_string_values(all_data):
     return all_data
 
 
+def convert_num_to_string_values_test(all_data):
+    # MSSubClass=The building class
+    all_data['MSSubClass'] = all_data['MSSubClass'].apply(str)
+    return all_data
+
+
+# SAVE LabelEncoder
+# https://stackoverflow.com/questions/28656736/using-scikits-labelencoder-correctly-across-multiple-programs
 def label_encoding(all_data):
     from sklearn.preprocessing import LabelEncoder
     cols = ('FireplaceQu', 'BsmtQual', 'BsmtCond', 'GarageQual', 'GarageCond',
@@ -123,10 +136,49 @@ def label_encoding(all_data):
             'LotShape', 'PavedDrive', 'Street', 'Alley', 'CentralAir', 'MSSubClass', 'OverallCond',
             'YrSold', 'MoSold')
     # process columns, apply LabelEncoder to categorical features
+    # convert categorical features to number
+    lbl_dict = dict()
     for c in cols:
         lbl = LabelEncoder()
-        lbl.fit(list(all_data[c].values))
-        all_data[c] = lbl.transform(list(all_data[c].values))
+        lbl.fit(list(all_data[c].values))  # get all type of categorical features
+        lbl_dict[c] = lbl
+        all_data[c] = lbl.transform(list(all_data[c].values))  # convert categorical features to number
+
+    # SAVE
+    np.save('output/saved_models/label_encoder.npy', lbl_dict)
+    # inspect shape
+    print('Shape all_data: {}'.format(all_data.shape))
+
+    return all_data
+
+
+# todo: ignore dummy data by labeling all categorical features to number
+def label_encoding_test(all_data):
+    from sklearn.preprocessing import LabelEncoder
+    cols = ('LandSlope', 'LotShape', 'Street', 'Alley', 'MSSubClass')
+    # process columns, apply LabelEncoder to categorical features
+    # convert categorical features to number
+    lbl_dict = dict()
+    for c in cols:
+        lbl = LabelEncoder()
+        lbl.fit(list(all_data[c].values))  # get all type of categorical features
+        lbl_dict[c] = lbl
+        all_data[c] = lbl.transform(list(all_data[c].values))  # convert categorical features to number
+
+    # SAVE
+    np.save('output/saved_models/label_encoder.npy', lbl_dict)
+    # inspect shape
+    print('Shape all_data: {}'.format(all_data.shape))
+
+    return all_data
+
+
+def label_encoding_loaded(all_data):
+    ori_encoder_dict = np.load('output/saved_models/label_encoder.npy', allow_pickle=True)
+    encoder_dict = ori_encoder_dict.tolist()
+    for key in encoder_dict.keys():
+        lbl = encoder_dict[key]
+        all_data[key] = lbl.transform(list(all_data[key].values))  # convert categorical features to number
 
     # inspect shape
     print('Shape all_data: {}'.format(all_data.shape))
@@ -137,6 +189,18 @@ def label_encoding(all_data):
 def transform_numerical_to_categorical_values(all_data):
     all_data = convert_num_to_string_values(all_data)
     all_data = label_encoding(all_data)
+    return all_data
+
+
+def transform_numerical_to_categorical_values_test(all_data):
+    all_data = convert_num_to_string_values_test(all_data)
+    all_data = label_encoding_test(all_data)
+    return all_data
+
+
+def load_transform_numerical_to_categorical_values(all_data):
+    all_data = convert_num_to_string_values(all_data)
+    all_data = label_encoding_loaded(all_data)
     return all_data
 
 
@@ -172,9 +236,28 @@ def box_cox_transform_skewed_features(all_data):
         all_data[feat] = boxcox1p(all_data[feat], lam)
 
     # all_data[skewed_features] = np.log1p(all_data[skewed_features]) # like this when lam = 0
+
+    # SAVE
+    np.save('output/saved_models/skewed_features.npy', skewed_features, allow_pickle=True)
+
     return all_data
 
 
+def box_cox_transform_skewed_features_loaded(record):
+    from scipy.special import boxcox1p
+    # LOAD
+    skewed_features = np.load('output/saved_models/skewed_features.npy', allow_pickle=True)
+    lam = 0.15
+    # print("[check-before]:", all_data["LotArea"])
+    for feat in skewed_features:
+        # all_data[feat] += 1
+        record[feat] = boxcox1p(record[feat], lam)
+
+    return record
+
+
+# dummy data, create all columns of categorical which are available
+# example: MSZoning : RL/RH -> dummy will create 2 columns: MSZoning_RL , MSZoning_RH
 def getting_new_train_test(all_data, n_train):
     all_data = pd.get_dummies(all_data)
     print(all_data.shape)
