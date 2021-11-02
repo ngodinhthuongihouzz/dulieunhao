@@ -120,6 +120,17 @@ def convert_num_to_string_values(all_data):
     return all_data
 
 
+def record_convert_num_to_string_values(all_data):
+    # MSSubClass=The building class
+    all_data['MSSubClass'] = all_data['MSSubClass'].apply(str)
+    # Changing OverallCond into a categorical variable
+    # all_data['OverallCond'] = all_data['OverallCond'].astype(str)
+    # Year and month sold are transformed into categorical features.
+    # all_data['YrSold'] = all_data['YrSold'].astype(str)
+    # all_data['MoSold'] = all_data['MoSold'].astype(str)
+    return all_data
+
+
 def convert_num_to_string_values_test(all_data):
     # MSSubClass=The building class
     all_data['MSSubClass'] = all_data['MSSubClass'].apply(str)
@@ -149,8 +160,8 @@ def label_encoding(all_data):
     for c in cols:
         lbl = LabelEncoder()
         lbl.fit(list(all_data[c].values))  # get all type of categorical features
-        print("[test]type of values: ", type(all_data[c].values))
-        print("[test] type of list values: ", type(list(all_data[c].values)))
+        # print("[test]type of values: ", type(all_data[c].values))
+        # print("[test] type of list values: ", type(list(all_data[c].values)))
         lbl_dict[c] = lbl
         all_data[c] = lbl.transform(list(all_data[c].values))  # convert categorical features to number
 
@@ -175,8 +186,8 @@ def label_encoding_test(all_data):
     for c in cols:
         lbl = LabelEncoder()
         lbl.fit(list(all_data[c].values))  # get all type of categorical features
-        print("[test]type of values: ", type(all_data[c].values))
-        print("[test] type of list values: ", type(list(all_data[c].values)))
+        # print("[test]type of values: ", type(all_data[c].values))
+        # print("[test] type of list values: ", type(list(all_data[c].values)))
 
         lbl_dict[c] = lbl
         all_data[c] = lbl.transform(list(all_data[c].values))  # convert categorical features to number
@@ -220,6 +231,12 @@ def load_transform_numerical_to_categorical_values(all_data):
     return all_data
 
 
+def record_load_transform_numerical_to_categorical_values(all_data):
+    all_data = record_convert_num_to_string_values(all_data)
+    all_data = label_encoding_loaded(all_data)
+    return all_data
+
+
 def add_more_features(all_data):
     # Since area related features are very important to determine house prices, we add one more feature
     # which is the total area of basement, first and second floor areas of each house
@@ -233,9 +250,9 @@ def skewed_features_func(all_data):
 
     # Check the skew of all numerical features
     skewed_feats = all_data[numeric_feats].apply(lambda x: skew(x.dropna())).sort_values(ascending=False)
-    print("\nSkew in numerical features: \n")
+    # print("\nSkew in numerical features: \n")
     skewness = pd.DataFrame({'Skew': skewed_feats})
-    print(skewness.head(10))
+    # print(skewness.head(10))
     return skewness
 
 

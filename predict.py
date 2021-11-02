@@ -12,11 +12,13 @@ if __name__ == '__main__':
     record_id = record['Id']
     record.drop("Id", axis=1, inplace=True)
     # Imputing missing values
-    record = dp.imputing_missing_values(record)
+    # record = dp.imputing_missing_values(record)
+    # record = record.drop(['Utilities'], axis=1)
     # Transforming some numerical variables that are really categorical
-    record = dp.load_transform_numerical_to_categorical_values(record)
+    # record = dp.load_transform_numerical_to_categorical_values(record)
+    record = dp.record_load_transform_numerical_to_categorical_values(record)
     # Adding total sq_footage feature
-    record = dp.add_more_features(record)
+    # record = dp.add_more_features(record)
     # SKEWED FEATURES
     record = dp.box_cox_transform_skewed_features_loaded(record)
 

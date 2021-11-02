@@ -48,6 +48,8 @@ if __name__ == '__main__':
     # Getting new train & test
     all_data, train, test = dp.getting_new_train_test(all_data, n_train)
 
+    print("Data processing time: ", timer() - start)
+
     # MODELLING ############
     import modelling as mlg
 
