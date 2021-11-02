@@ -3,10 +3,10 @@ version=v3
 num_class=1
 num_tree_per_iteration=1
 label_index=0
-max_feature_idx=18
+max_feature_idx=11
 objective=regression
-feature_names=MSSubClass LotFrontage LotArea Street Alley LotShape LandSlope MSZoning_RH MSZoning_RL LandContour_Lvl Utilities_AllPub LotConfig_Corner LotConfig_FR2 LotConfig_Inside Neighborhood_CollgCr Neighborhood_Crawfor Neighborhood_NAmes Neighborhood_NoRidge Neighborhood_Veenker
-feature_infos=none none none none none none none none none none none none none none none none none none none
+feature_names=MSSubClass MSZoning LotFrontage LotArea Street Alley LotShape LandContour Utilities LotConfig LandSlope Neighborhood
+feature_infos=none none none none none none none none none none none none
 tree_sizes=238
 
 Tree=0

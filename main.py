@@ -32,6 +32,8 @@ if __name__ == '__main__':
 
     # Imputing missing values
     # all_data = dp.imputing_missing_values(all_data)  # optional ???
+    # all_data = all_data.drop(['Utilities'], axis=1)  # optional ???
+    # all_data = all_data.drop(['Neighborhood'], axis=1)  # optional ???
 
     # Transforming some numerical variables that are really categorical
     # all_data = dp.transform_numerical_to_categorical_values(all_data)
@@ -63,7 +65,7 @@ if __name__ == '__main__':
     # trained_model_xgb, trained_model_lgb, trained_stacked_averaged_models = mlg.load_models()
 
     # Test
-    # mlg.test_models(trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, train, y_train)
+    mlg.test_models(trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, train, y_train)
 
     # Predict
     mlg.run_predict_models('output/submission.csv', trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, test, test_id)

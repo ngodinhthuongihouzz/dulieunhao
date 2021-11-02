@@ -123,6 +123,13 @@ def convert_num_to_string_values(all_data):
 def convert_num_to_string_values_test(all_data):
     # MSSubClass=The building class
     all_data['MSSubClass'] = all_data['MSSubClass'].apply(str)
+
+    # # Changing OverallCond into a categorical variable
+    # all_data['OverallCond'] = all_data['OverallCond'].astype(str)
+    # # Year and month sold are transformed into categorical features.
+    # all_data['YrSold'] = all_data['YrSold'].astype(str)
+    # all_data['MoSold'] = all_data['MoSold'].astype(str)
+
     return all_data
 
 
@@ -134,13 +141,16 @@ def label_encoding(all_data):
             'ExterQual', 'ExterCond', 'HeatingQC', 'PoolQC', 'KitchenQual', 'BsmtFinType1',
             'BsmtFinType2', 'Functional', 'Fence', 'BsmtExposure', 'GarageFinish', 'LandSlope',
             'LotShape', 'PavedDrive', 'Street', 'Alley', 'CentralAir', 'MSSubClass', 'OverallCond',
-            'YrSold', 'MoSold')
+            'YrSold', 'MoSold'
+            )
     # process columns, apply LabelEncoder to categorical features
     # convert categorical features to number
     lbl_dict = dict()
     for c in cols:
         lbl = LabelEncoder()
         lbl.fit(list(all_data[c].values))  # get all type of categorical features
+        print("[test]type of values: ", type(all_data[c].values))
+        print("[test] type of list values: ", type(list(all_data[c].values)))
         lbl_dict[c] = lbl
         all_data[c] = lbl.transform(list(all_data[c].values))  # convert categorical features to number
 
@@ -155,13 +165,19 @@ def label_encoding(all_data):
 # todo: ignore dummy data by labeling all categorical features to number
 def label_encoding_test(all_data):
     from sklearn.preprocessing import LabelEncoder
-    cols = ('LandSlope', 'LotShape', 'Street', 'Alley', 'MSSubClass')
-    # process columns, apply LabelEncoder to categorical features
-    # convert categorical features to number
+    cols = ('LandSlope', 'LotShape', 'Street', 'Alley', 'MSSubClass',
+            'MSZoning', 'LandContour', 'LotConfig', 'Utilities', 'Neighborhood')  # không chừa một cột nào còn
+    # giá trị categorial -> warning "UserWarning: Usage of np.ndarray subset (sliced data) is not recommended due
+    # to it will double the peak memory cost in LightGBM. _log_warning("Usage of np.ndarray subset (sliced data) is
+    # not recommended " process columns, apply LabelEncoder to categorical features convert categorical features to
+    # number
     lbl_dict = dict()
     for c in cols:
         lbl = LabelEncoder()
         lbl.fit(list(all_data[c].values))  # get all type of categorical features
+        print("[test]type of values: ", type(all_data[c].values))
+        print("[test] type of list values: ", type(list(all_data[c].values)))
+
         lbl_dict[c] = lbl
         all_data[c] = lbl.transform(list(all_data[c].values))  # convert categorical features to number
 

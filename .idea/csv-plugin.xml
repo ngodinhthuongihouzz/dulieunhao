@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\input\predict\test2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\predict\test3.csv">
           <value>
             <Attribute>
@@ -45,7 +52,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\test\record1.csv">
+        <entry key="\input\test.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -59,14 +66,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\test\test2.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\input\test\test3.csv">
+        <entry key="\input\train.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -74,20 +74,6 @@
           </value>
         </entry>
         <entry key="\input\train\train.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\input\train\train2.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\input\train\train3.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
