@@ -38,8 +38,8 @@ print(os.listdir('../input'))
 
 # Now let's import and put the train and test datasets in  pandas dataframe
 
-train = pd.read_csv('../input/sample_input/train.csv')
-test = pd.read_csv('../input/sample_input/test.csv')
+train = pd.read_csv('../samples/train.csv')
+test = pd.read_csv('../samples/test.csv')
 
 # display the first five rows of the train dataset.
 print(train.head(5))

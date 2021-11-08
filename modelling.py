@@ -10,6 +10,14 @@ from sklearn.model_selection import KFold, cross_val_score, train_test_split
 from sklearn.metrics import mean_squared_error
 import xgboost as xgb
 import lightgbm as lgb
+import warnings
+
+
+def ignore_warn(*args, **kwargs):
+    pass
+
+
+warnings.warn = ignore_warn  # ignore annoying warning (from sklearn and seaborn)
 
 
 #
@@ -138,7 +146,8 @@ def train_models_faster(train, y_train):
 
     for process in processes:
         process.join()
-    return return_dict["trained_stacked_averaged_models"], return_dict["trained_model_xgb"], return_dict["trained_model_lgb"]
+    return return_dict["trained_stacked_averaged_models"], return_dict["trained_model_xgb"], return_dict[
+        "trained_model_lgb"]
 
 
 def train_stacked_averaged_model(train, y_train, return_dict):
@@ -209,5 +218,4 @@ def run_predict_models(out_path, trained_stacked_averaged_models, trained_model_
     sub['Id'] = test_ID
     sub['SalePrice'] = ensemble
     sub.to_csv(out_path, index=False)
-
-
+    return sub['SalePrice']

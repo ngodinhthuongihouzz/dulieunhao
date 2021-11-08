@@ -50,31 +50,6 @@ if __name__ == '__main__':
 
     print("Data processing time: ", timer() - start)
 
-    # MODELLING ############
-    import modelling as mlg
-
-    # Train
-    start_train = timer()
-    trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb = mlg.train_models(train, y_train)
-    # trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb = mlg.train_models_faster(train, y_train)
-    print("Train time: ", timer() - start_train)
-
-    # Save trained models
-    mlg.save_models(trained_model_xgb, trained_model_lgb, trained_stacked_averaged_models.base_models_,
-                    trained_stacked_averaged_models.meta_model_)
-
-    # Load trained models
-    # trained_model_xgb, trained_model_lgb, trained_stacked_averaged_models = mlg.load_models()
-
-    # Test
-    mlg.test_models(trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, train, y_train)
-
-    # Predict
-    mlg.run_predict_models('output/submission.csv', trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, test, test_id)
-
-    # Time calculate
-    print("Total time: ", timer() - start)
-
     # Prevent close program
     k = input("Press any key to exit")
 

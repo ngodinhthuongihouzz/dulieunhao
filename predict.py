@@ -8,7 +8,9 @@ if __name__ == '__main__':
 
     # DATA PROCESSING ############
     import data_processing as dp
+
     record = dp.read_single_predict_input(predict_path='input/predict/record1.csv')
+    print("***Input: \n", record.to_string())
     record_id = record['Id']
     record.drop("Id", axis=1, inplace=True)
     # Imputing missing values
@@ -36,9 +38,13 @@ if __name__ == '__main__':
     trained_model_xgb, trained_model_lgb, trained_stacked_averaged_models = mlg.load_models()
 
     # Predict
-    mlg.run_predict_models('output/predict/submission.csv', trained_stacked_averaged_models, trained_model_xgb,
-                           trained_model_lgb, record, record_id)
+    out = mlg.run_predict_models('output/predict/submission.csv', trained_stacked_averaged_models, trained_model_xgb,
+                                 trained_model_lgb, record, record_id)
+
+    print("***Output: \n", out.to_string())
 
     # Time calculate
     print("Predict time: ", timer() - start)
 
+    # Prevent close program
+    k = input("Press any key to exit")
