@@ -76,5 +76,5 @@ if __name__ == '__main__':
     print("Total time: ", timer() - start)
 
     # Prevent close program
-    k = input("Press any key to exit")
+    # k = input("Press any key to exit")
 
