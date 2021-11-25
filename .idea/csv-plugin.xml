@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\input\train\cars.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\train\train.csv">
           <value>
             <Attribute>
@@ -60,6 +67,20 @@
           </value>
         </entry>
         <entry key="\samples\sample_submission.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\samples\test.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\samples\train.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

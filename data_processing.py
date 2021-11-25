@@ -45,6 +45,7 @@ def drop_id(train, test):
     return train, test
 
 
+# Optional for each criteria to improve over-fitting, can be omitted
 def delete_outliers(train):
     # Deleting outliers
     train = train.drop(train[(train['GrLivArea'] > 4000) & (train['SalePrice'] < 300000)].index)
@@ -297,3 +298,4 @@ def getting_new_train_test(all_data, n_train):
     train = all_data[:n_train]
     test = all_data[n_train:]
     return all_data, train, test
+

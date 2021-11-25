@@ -99,19 +99,30 @@ def rmsle(y, y_pred):
 # Validation function
 n_folds = 5
 
+# no n_jobs?
 lasso = make_pipeline(RobustScaler(), Lasso(alpha=0.0005, random_state=1))
+
+# no n_jobs?
 ENet = make_pipeline(RobustScaler(), ElasticNet(alpha=0.0005, l1_ratio=.9, random_state=3))
+
+# no n_jobs?
 KRR = KernelRidge(alpha=0.6, kernel='polynomial', degree=2, coef0=2.5)
+
+# no n_jobs?
 GBoost = GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05,
                                    max_depth=4, max_features='sqrt',
                                    min_samples_leaf=15, min_samples_split=10,
                                    loss='huber', random_state=5)
+
+# check to add to increase speed n_jobs = threading.active_count(), nthread = threading.active_count()
 model_xgb = xgb.XGBRegressor(colsample_bytree=0.4603, gamma=0.0468,
                              learning_rate=0.05, max_depth=3,
                              min_child_weight=1.7817, n_estimators=2200,
                              reg_alpha=0.4640, reg_lambda=0.8571,
                              subsample=0.5213, silent=1,
                              random_state=7, nthread=-1)
+
+# n_jobs = threading.active_count()
 model_lgb = lgb.LGBMRegressor(objective='regression', num_leaves=5,
                               learning_rate=0.05, n_estimators=720,
                               max_bin=55, bagging_fraction=0.8,
@@ -219,3 +230,4 @@ def run_predict_models(out_path, trained_stacked_averaged_models, trained_model_
     sub['SalePrice'] = ensemble
     sub.to_csv(out_path, index=False)
     return sub['SalePrice']
+
