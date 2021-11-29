@@ -1,3 +1,5 @@
+import csv
+
 import numpy as np
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 from scipy.stats import norm, skew  # for some statistics
@@ -298,4 +300,48 @@ def getting_new_train_test(all_data, n_train):
     train = all_data[:n_train]
     test = all_data[n_train:]
     return all_data, train, test
+
+
+def convert_crawled_to_input_data(crawled_path, input_des_path):
+    crawled_data = pd.read_csv(crawled_path)
+    # drop columns ID, Type, Province, District, Ward, Street, Project, LandNum, BlockName
+    crawled_data.drop(['ID'], axis=1, inplace=True)
+    crawled_data.drop(['Type'], axis=1, inplace=True)
+    crawled_data.drop(['Province'], axis=1, inplace=True)
+    crawled_data.drop(['District'], axis=1, inplace=True)
+    crawled_data.drop(['Ward'], axis=1, inplace=True)
+    crawled_data.drop(['Street'], axis=1, inplace=True)
+    crawled_data.drop(['Project'], axis=1, inplace=True)
+    crawled_data.drop(['LandNum'], axis=1, inplace=True)
+    crawled_data.drop(['BlockName'], axis=1, inplace=True)
+
+    # pickup each row of data to list
+    type_of_real_estate = crawled_data["TypeOfRealEstate"].tolist()
+    print("type_of_real_estate: ", type(type_of_real_estate))
+
+    area = crawled_data["Area"].tolist()
+    print("type of area:", type(area))
+
+    # add new columns to last of columns with empty values
+    crawled_data["MyID"] = ""
+
+    # create/ reconstruct csv file to train data
+    file = open("out_Demo.csv", "w")
+    writer = csv.writer(file)
+
+    for w in range(4):
+        writer.writerow(type_of_real_estate[w])
+    file.close()
+
+    # rename exists columns
+    # todo test this function -----------------------------------
+    crawled_data = crawled_data.rename(columns={'Custom field (Implemented Date)': 'Custom field (Verified Date)'})
+
+    # redefine data of columns
+
+    # save new file
+    crawled_data.to_csv(input_des_path, index=False, encoding='utf-8-sig')  # encoding: 'utf-8-sig' for Vietnamese
+
+    return
+
 

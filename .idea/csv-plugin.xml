@@ -3,6 +3,34 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="\input\crawled\Data_Demo.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\crawled\Demo (1).csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="&#9;" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\crawled\Demo.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="&#9;" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\crawled\StandardData.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\predict\record1.csv">
           <value>
             <Attribute>
@@ -38,7 +66,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\train\cars.csv">
+        <entry key="\input\train\StandardData.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -46,6 +74,13 @@
           </value>
         </entry>
         <entry key="\input\train\train.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\out_Demo.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
