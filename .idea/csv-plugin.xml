@@ -3,28 +3,28 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="\input\crawled\Data_Demo.csv">
+        <entry key="\input\crawled\Demo.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\crawled\Demo (1).csv">
+        <entry key="\input\crawled\Demo[Edited].csv">
           <value>
             <Attribute>
-              <option name="separator" value="&#9;" />
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\crawled\Demo.csv">
+        <entry key="\input\crawled\Demo_Edited_v1.csv">
           <value>
             <Attribute>
-              <option name="separator" value="&#9;" />
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\crawled\StandardData.csv">
+        <entry key="\input\crawled\Demo_[Edited].csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -66,21 +66,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\train\StandardData.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\input\train\train.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\out_Demo.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

@@ -108,7 +108,17 @@ def check_remaining_missing_values(all_data):
     all_data_na = (all_data.isnull().sum() / len(all_data)) * 100
     all_data_na = all_data_na.drop(all_data_na[all_data_na == 0].index).sort_values(ascending=False)
     missing_data = pd.DataFrame({'Missing Ratio': all_data_na})
-    print(missing_data.head())
+    print(missing_data.head(n=100))  # default for first 100 features
+    # show figure for missing values
+    import matplotlib.pyplot as plt  # Matlab-style plotting
+    import seaborn as sns
+    f, ax = plt.subplots(figsize=(15, 12))
+    plt.xticks(rotation='90')
+    sns.barplot(x=all_data_na.index, y=all_data_na)
+    plt.xlabel('Features', fontsize=15)
+    plt.ylabel('Percent of missing values', fontsize=15)
+    plt.title('Percent missing data by feature', fontsize=15)
+    plt.show()
 
 
 # Transforming some numerical variables that are really categorical
@@ -302,11 +312,16 @@ def getting_new_train_test(all_data, n_train):
     return all_data, train, test
 
 
-def convert_crawled_to_input_data(crawled_path, input_des_path):
+def convert_crawled_to_input_data(crawled_path, out_file_path):
+    from timeit import default_timer as timer
+    start = timer()
+    print("start convert_crawled_to_input_data ...")
     crawled_data = pd.read_csv(crawled_path)
-    # drop columns ID, Type, Province, District, Ward, Street, Project, LandNum, BlockName
+
+    # todo: drop columns ID, Type, TypeOfRealEstate, Province, District, Ward, Street, Project, LandNum, BlockName
     crawled_data.drop(['ID'], axis=1, inplace=True)
     crawled_data.drop(['Type'], axis=1, inplace=True)
+    crawled_data.drop(['TypeOfRealEstate'], axis=1, inplace=True)
     crawled_data.drop(['Province'], axis=1, inplace=True)
     crawled_data.drop(['District'], axis=1, inplace=True)
     crawled_data.drop(['Ward'], axis=1, inplace=True)
@@ -315,33 +330,124 @@ def convert_crawled_to_input_data(crawled_path, input_des_path):
     crawled_data.drop(['LandNum'], axis=1, inplace=True)
     crawled_data.drop(['BlockName'], axis=1, inplace=True)
 
-    # pickup each row of data to list
-    type_of_real_estate = crawled_data["TypeOfRealEstate"].tolist()
-    print("type_of_real_estate: ", type(type_of_real_estate))
+    # todo: get each row of data to list
+    form_real_estate = crawled_data["FormRealEstate"].tolist()  # Loại Hình BĐS
+    floor_num = crawled_data["FloorNum"].tolist()  # Tầng Số
+    area = crawled_data["Area"].tolist()  # Diện Tích
+    height = crawled_data["Height"].tolist()  # Chiều Dài
+    width = crawled_data["Width"].tolist()  # Chiều Rộng
+    usable_area = crawled_data["UsableArea"].tolist()  # DTSD
+    front_length = crawled_data["FrontLength"].tolist()  # Mặt Tiền
+    back_side_length = crawled_data["BackSideLength"].tolist()  # Mặt Hậu
+    direction = crawled_data["Direction"].tolist()  # Hướng
+    balcony_direction = crawled_data["BalconyDirection"].tolist()  # Hướng Ban Công
+    corner = crawled_data["Corner"].tolist()  # Căn Góc
+    road_in_front = crawled_data["RoadInFront"].tolist()  # Đường Trước Nhà
+    juridical = crawled_data["Juridical"].tolist()  # Pháp Lý
+    num_of_bed = crawled_data["NumOfBed"].tolist()  # Số Phòng Ngủ
+    num_of_floor = crawled_data["NumOfFloor"].tolist()  # Số Tầng
+    num_of_toilet = crawled_data["NumOfToilet"].tolist()  # Số Nhà Vệ Sinh
+    construction_year = crawled_data["ConstructionYear"].tolist()  # Năm Xây Dựng
+    status_of_re = crawled_data["StatusOfRE"].tolist()  # Tình Trạng BĐS
+    characteristics_re = crawled_data["CharacteristicsRE"].tolist()  # Đặc Tính BĐS
+    is_owner = crawled_data["IsOwner"].tolist()  # Chính Chủ
+    furniture = crawled_data["Furniture"].tolist()  # Tình Trạng Nội Thất
+    terrace = crawled_data["Terrace"].tolist()  # Sân Thượng
+    car_parking = crawled_data["CarParking"].tolist()  # Chỗ Để Xe Hơi
+    dinning_room = crawled_data["DinningRoom"].tolist()  # Phòng Ăn
+    kitchen = crawled_data["Kitchen"].tolist()  # Nhà Bếp
+    air_cond = crawled_data["AirCond"].tolist()  # Điều Hòa
+    internet = crawled_data["Internet"].tolist()  # Internet (ADSL & Cáp Quang)
+    washing_machine = crawled_data["WashingMachine"].tolist()  # Máy Giặt
+    balcony = crawled_data["Balcony"].tolist()  # Ban Công
+    fridge = crawled_data["Fridge"].tolist()  # Tủ Lạnh
+    wifi = crawled_data["Wifi"].tolist()  # Wifi
+    pool = crawled_data["Pool"].tolist()  # Pool
+    basement = crawled_data["Basement"].tolist()  # Tầng Hầm
+    super_market = crawled_data["SuperMarket"].tolist()  # Siêu Thị
+    market = crawled_data["Market"].tolist()  # Chợ
+    park = crawled_data["Park"].tolist()  # Công Viên
+    clinics = crawled_data["Clinics"].tolist()  # Trạm Xá
+    sea = crawled_data["Sea"].tolist()  # Biển
+    hospital = crawled_data["Hospital"].tolist()  # Bệnh Viện
+    church = crawled_data["Church"].tolist()  # Nhà Thờ
+    bus_station = crawled_data["BusStation"].tolist()  # Bến Xe Buýt
+    school = crawled_data["School"].tolist()  # Trường Học
+    temple = crawled_data["Temple"].tolist()  # Chùa
+    airport = crawled_data["Airport"].tolist()  # Sân Bay
+    pre_school = crawled_data["Preschool"].tolist()  # Trường Mầm Non
+    price_psm = crawled_data["PricePSM"].tolist()  # Giá / m2
+    price = crawled_data["Price"].tolist()  # Giá
 
-    area = crawled_data["Area"].tolist()
-    print("type of area:", type(area))
-
-    # add new columns to last of columns with empty values
-    crawled_data["MyID"] = ""
-
-    # create/ reconstruct csv file to train data
-    file = open("out_Demo.csv", "w")
+    # todo: create/reconstruct CSV file to train data
+    file = open(out_file_path, "w", newline='', encoding='utf-8-sig')
     writer = csv.writer(file)
-
-    for w in range(4):
-        writer.writerow(type_of_real_estate[w])
+    print("n records: ", crawled_data.shape[0])
+    writer.writerow(["Id", "Loại Hình BDS", "Tầng Số", "Diện Tích", "Chiều Dài", "Chiều Rộng", "DTSD",
+                     "Mặt Tiền", "Mặt Hậu", "Hướng", "Hướng Ban Công", "Căn góc", "Đường Trước Nhà", "Pháp Lý",
+                     "Số Phòng Ngủ", "Số Tầng", "Số Nhà Vệ Sinh", "Năm Xây Dựng", "Tình Trạng BĐS",
+                     "Đặc Tính BĐS", "Chính Chủ", "Tình Trạng Nội Thất", "Sân Thượng", "Chỗ Để Xe Hơi",
+                     "Phòng Ăn", "Nhà Bếp", "Điều Hòa", "Internet (ADSL & Cáp Quang)", "Máy Giặt", "Ban Công",
+                     "Tủ Lạnh", "Wifi", "Hồ Bơi", "Tầng Hầm", "Siêu Thị", "Chợ", "Công Viên", "Trạm Xá",
+                     "Biển", "Bệnh Viện", "Nhà Thờ", "Bến Xe Buýt", "Trường Học", "Chùa", "Sân Bay",
+                     "Trường Mầm Non", "Giá / m2", "Giá"])
+    for rec in range(crawled_data.shape[0]):
+        writer.writerow([rec + 1, form_real_estate[rec], floor_num[rec], area[rec], height[rec], width[rec],
+                         usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
+                         balcony_direction[rec], corner[rec], road_in_front[rec], juridical[rec], num_of_bed[rec],
+                         num_of_floor[rec], num_of_toilet[rec], construction_year[rec], status_of_re[rec],
+                         characteristics_re[rec], is_owner[rec], furniture[rec], terrace[rec], car_parking[rec],
+                         dinning_room[rec], kitchen[rec], air_cond[rec], internet[rec], washing_machine[rec],
+                         balcony[rec], fridge[rec], wifi[rec], pool[rec], basement[rec], super_market[rec],
+                         market[rec], park[rec], clinics[rec], sea[rec], hospital[rec], church[rec], bus_station[rec],
+                         school[rec], temple[rec], airport[rec], pre_school[rec], price_psm[rec], price[rec]])
     file.close()
 
+    # area = crawled_data["Area"].tolist()
+    # print("type of area:", type(area))
+
+    # add new columns to last of columns with empty values
+    # crawled_data["MyID"] = ""
+
     # rename exists columns
-    # todo test this function -----------------------------------
-    crawled_data = crawled_data.rename(columns={'Custom field (Implemented Date)': 'Custom field (Verified Date)'})
+    # crawled_data.rename(columns={'Area': 'Area (test changed)'}, inplace=True)
 
     # redefine data of columns
 
     # save new file
-    crawled_data.to_csv(input_des_path, index=False, encoding='utf-8-sig')  # encoding: 'utf-8-sig' for Vietnamese
-
+    # crawled_data.to_csv(input_des_path, index=False, encoding='utf-8-sig')  # encoding: 'utf-8-sig' for Vietnamese
+    print("done!")
+    print("Convert CSV(Edited) time: ", timer() - start, "(s)")
     return
 
 
+def inspect_distribution(data, inspect_features, target_features):
+    import matplotlib.pyplot as plt  # Matlab-style plotting
+    fig, ax = plt.subplots()
+    ax.scatter(x=data[inspect_features], y=data[target_features])
+    plt.title("DISTRIBUTION: " + inspect_features + " - " + target_features)
+    plt.ylabel(target_features, fontsize=13)
+    plt.xlabel(inspect_features, fontsize=13)
+    # plt.show()
+
+
+def analyze_target_features(data):
+    import matplotlib.pyplot as plt  # Matlab-style plotting
+    import seaborn as sns
+    from scipy import stats
+
+    sns.distplot(data['Giá'], fit=norm)  # todo: drop all fields with Giá = nan
+
+    # Get the fitted parameters used by the function
+    (mu, sigma) = norm.fit(data['Giá'])
+    print('\n mu = {:.2f} and sigma = {:.2f}\n'.format(mu, sigma))
+
+    # Now plot the distribution
+    plt.legend(['Normal dist. ($\mu=$ {:.2f} and $\sigma=$ {:.2f} )'.format(mu, sigma)], loc='best')
+    plt.ylabel('Frequency')
+    plt.title('Price distribution')
+
+    # Get also the QQ-plot
+    fig = plt.figure()
+    res = stats.probplot(data['Giá'], plot=plt)
+    plt.show()
