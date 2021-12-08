@@ -121,6 +121,50 @@ def check_remaining_missing_values(all_data):
     plt.show()
 
 
+def check_remaining_missing_values_and_remove(all_data):
+    # Check remaining missing values if any
+    all_data_na = (all_data.isnull().sum() / len(all_data)) * 100
+    all_data_na = all_data_na.drop(all_data_na[all_data_na == 0].index).sort_values(ascending=False)
+    missing_data = pd.DataFrame({'Missing Ratio': all_data_na})
+    print(missing_data.head(n=100))  # default for first 100 features
+    # show figure for missing values
+    import matplotlib.pyplot as plt  # Matlab-style plotting
+    import seaborn as sns
+    f, ax = plt.subplots(figsize=(15, 12))
+    plt.xticks(rotation='90')
+    sns.barplot(x=all_data_na.index, y=all_data_na)
+    plt.xlabel('Features', fontsize=15)
+    plt.ylabel('Percent of missing values', fontsize=15)
+    plt.title('Percent missing data by feature', fontsize=15)
+    plt.show()
+    data = drop_data_and_save(all_data, all_data_na, 'input/crawled/train20211207_110259[Dropped].csv')
+    return data
+
+
+def remove_unset_rows(data):
+    return data
+
+
+def fill_unset_rows(data):
+    area = data["Area"].tolist()  # Diện Tích
+    height = data["Height"].tolist()  # Chiều Dài
+    width = data["Width"].tolist()  # Chiều Ngang
+    import math
+    # print("len area: ", len(area))
+    # print("len height: ", len(height))
+    # print("area[0].isnan(): ", math.isnan(area[0]))
+    # print("height[rec].isnan(): ", math.isnan(height[0]))
+    for rec in range(len(area)):
+        if math.isnan(area[rec]) and math.isnan(height[rec]) is False and math.isnan(width[rec]) is False:
+            data["Area"][rec] = height[rec] * width[rec]
+            # data["Area"].set_value()
+            # data.set_value(rec, "Area", height[rec] * width[rec], takeable=False)
+            # data.
+
+    data.to_csv('input/crawled/train20211207_110259[FillUnsetData].csv', index=False, encoding='utf-8-sig')
+    return data
+
+
 # Transforming some numerical variables that are really categorical
 def convert_num_to_string_values(all_data):
     # MSSubClass=The building class
@@ -318,20 +362,8 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     print("start convert_crawled_to_input_data ...")
     crawled_data = pd.read_csv(crawled_path)
 
-    # todo: drop columns ID, Type, TypeOfRealEstate, Province, District, Ward, Street, Project, LandNum, BlockName
-    crawled_data.drop(['ID'], axis=1, inplace=True)
-    crawled_data.drop(['Type'], axis=1, inplace=True)
-    crawled_data.drop(['TypeOfRealEstate'], axis=1, inplace=True)
-    crawled_data.drop(['Province'], axis=1, inplace=True)
-    crawled_data.drop(['District'], axis=1, inplace=True)
-    crawled_data.drop(['Ward'], axis=1, inplace=True)
-    crawled_data.drop(['Street'], axis=1, inplace=True)
-    crawled_data.drop(['Project'], axis=1, inplace=True)
-    crawled_data.drop(['LandNum'], axis=1, inplace=True)
-    crawled_data.drop(['BlockName'], axis=1, inplace=True)
-
     # todo: get each row of data to list
-    form_real_estate = crawled_data["FormRealEstate"].tolist()  # Loại Hình BĐS
+    form_re = crawled_data["FormRE"].tolist()  # Loại Hình BĐS
     floor_num = crawled_data["FloorNum"].tolist()  # Tầng Số
     area = crawled_data["Area"].tolist()  # Diện Tích
     height = crawled_data["Height"].tolist()  # Chiều Dài
@@ -348,8 +380,8 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     num_of_floor = crawled_data["NumOfFloor"].tolist()  # Số Tầng
     num_of_toilet = crawled_data["NumOfToilet"].tolist()  # Số Nhà Vệ Sinh
     construction_year = crawled_data["ConstructionYear"].tolist()  # Năm Xây Dựng
-    status_of_re = crawled_data["StatusOfRE"].tolist()  # Tình Trạng BĐS
-    characteristics_re = crawled_data["CharacteristicsRE"].tolist()  # Đặc Tính BĐS
+    # status_of_re = crawled_data["StatusOfRE"].tolist()  # Tình Trạng BĐS
+    # characteristics_re = crawled_data["CharacteristicsRE"].tolist()  # Đặc Tính BĐS
     is_owner = crawled_data["IsOwner"].tolist()  # Chính Chủ
     furniture = crawled_data["Furniture"].tolist()  # Tình Trạng Nội Thất
     terrace = crawled_data["Terrace"].tolist()  # Sân Thượng
@@ -357,16 +389,15 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     dinning_room = crawled_data["DinningRoom"].tolist()  # Phòng Ăn
     kitchen = crawled_data["Kitchen"].tolist()  # Nhà Bếp
     air_cond = crawled_data["AirCond"].tolist()  # Điều Hòa
-    internet = crawled_data["Internet"].tolist()  # Internet (ADSL & Cáp Quang)
+    adsl = crawled_data["ADSL"].tolist()  # ADSL
     washing_machine = crawled_data["WashingMachine"].tolist()  # Máy Giặt
     balcony = crawled_data["Balcony"].tolist()  # Ban Công
     fridge = crawled_data["Fridge"].tolist()  # Tủ Lạnh
     wifi = crawled_data["Wifi"].tolist()  # Wifi
     pool = crawled_data["Pool"].tolist()  # Pool
     basement = crawled_data["Basement"].tolist()  # Tầng Hầm
-    super_market = crawled_data["SuperMarket"].tolist()  # Siêu Thị
-    market = crawled_data["Market"].tolist()  # Chợ
     park = crawled_data["Park"].tolist()  # Công Viên
+    super_market = crawled_data["SuperMarket"].tolist()  # Siêu Thị
     clinics = crawled_data["Clinics"].tolist()  # Trạm Xá
     sea = crawled_data["Sea"].tolist()  # Biển
     hospital = crawled_data["Hospital"].tolist()  # Bệnh Viện
@@ -376,6 +407,7 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     temple = crawled_data["Temple"].tolist()  # Chùa
     airport = crawled_data["Airport"].tolist()  # Sân Bay
     pre_school = crawled_data["Preschool"].tolist()  # Trường Mầm Non
+    characteristics = crawled_data["Characteristics"].tolist()  # Đặc Tính
     price_psm = crawled_data["PricePSM"].tolist()  # Giá / m2
     price = crawled_data["Price"].tolist()  # Giá
 
@@ -383,24 +415,31 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     file = open(out_file_path, "w", newline='', encoding='utf-8-sig')
     writer = csv.writer(file)
     print("n records: ", crawled_data.shape[0])
-    writer.writerow(["Id", "Loại Hình BDS", "Tầng Số", "Diện Tích", "Chiều Dài", "Chiều Rộng", "DTSD",
-                     "Mặt Tiền", "Mặt Hậu", "Hướng", "Hướng Ban Công", "Căn góc", "Đường Trước Nhà", "Pháp Lý",
-                     "Số Phòng Ngủ", "Số Tầng", "Số Nhà Vệ Sinh", "Năm Xây Dựng", "Tình Trạng BĐS",
-                     "Đặc Tính BĐS", "Chính Chủ", "Tình Trạng Nội Thất", "Sân Thượng", "Chỗ Để Xe Hơi",
-                     "Phòng Ăn", "Nhà Bếp", "Điều Hòa", "Internet (ADSL & Cáp Quang)", "Máy Giặt", "Ban Công",
-                     "Tủ Lạnh", "Wifi", "Hồ Bơi", "Tầng Hầm", "Siêu Thị", "Chợ", "Công Viên", "Trạm Xá",
-                     "Biển", "Bệnh Viện", "Nhà Thờ", "Bến Xe Buýt", "Trường Học", "Chùa", "Sân Bay",
-                     "Trường Mầm Non", "Giá / m2", "Giá"])
+    writer.writerow(["ID", "FormRE", "FloorNum", "Area", "Height", "Width", "UsableArea",
+                     "FrontLength", "BackSideLength", "Direction", "BalconyDirection", "Corner", "RoadInFront",
+                     "Juridical", "NumOfBed", "NumOfFloor", "NumOfToilet", "ConstructionYear", "IsOwner",
+                     "Furniture", "Terrace", "CarParking", "DinningRoom", "Kitchen", "AirCond",
+                     "ADSL", "WashingMachine", "Balcony", "Fridge", "Wifi", "Pool",
+                     "Basement", "Park", "SuperMarket", "Clinics", "Sea", "Hospital", "Church",
+                     "BusStation", "School", "Temple", "Airport", "Preschool", "Characteristics", "PricePSM", "Price"])
+
+    import math
+    id_rec = 0
     for rec in range(crawled_data.shape[0]):
-        writer.writerow([rec + 1, form_real_estate[rec], floor_num[rec], area[rec], height[rec], width[rec],
-                         usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
-                         balcony_direction[rec], corner[rec], road_in_front[rec], juridical[rec], num_of_bed[rec],
-                         num_of_floor[rec], num_of_toilet[rec], construction_year[rec], status_of_re[rec],
-                         characteristics_re[rec], is_owner[rec], furniture[rec], terrace[rec], car_parking[rec],
-                         dinning_room[rec], kitchen[rec], air_cond[rec], internet[rec], washing_machine[rec],
-                         balcony[rec], fridge[rec], wifi[rec], pool[rec], basement[rec], super_market[rec],
-                         market[rec], park[rec], clinics[rec], sea[rec], hospital[rec], church[rec], bus_station[rec],
-                         school[rec], temple[rec], airport[rec], pre_school[rec], price_psm[rec], price[rec]])
+        # todo: drop all fields with Giá = nan
+        if is_valid_record(width[rec], height[rec], area[rec], price[rec]):
+            writer.writerow([id_rec + 1, form_re[rec], floor_num[rec], area[rec], height[rec], width[rec],
+                             usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
+                             balcony_direction[rec], corner[rec], road_in_front[rec], juridical[rec], num_of_bed[rec],
+                             num_of_floor[rec], num_of_toilet[rec], construction_year[rec], is_owner[rec],
+                             furniture[rec],
+                             terrace[rec], car_parking[rec], dinning_room[rec], kitchen[rec], air_cond[rec], adsl[rec],
+                             washing_machine[rec], balcony[rec], fridge[rec], wifi[rec], pool[rec], basement[rec],
+                             park[rec],
+                             super_market[rec], clinics[rec], sea[rec], hospital[rec], church[rec], bus_station[rec],
+                             school[rec], temple[rec], airport[rec], pre_school[rec], characteristics[rec],
+                             price_psm[rec], price[rec]])
+            id_rec += 1
     file.close()
 
     # area = crawled_data["Area"].tolist()
@@ -421,14 +460,39 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     return
 
 
-def inspect_distribution(data, inspect_features, target_features):
+def is_valid_record(width, height, area, price):
+    i = 0
+    import math
+    if math.isnan(width):
+        i += 1
+    if math.isnan(height):
+        i += 1
+    if math.isnan(area):
+        i += 1
+
+    if i >= 2 or math.isnan(price):
+        return False
+    else:
+        return True
+
+
+def drop_data_and_save(data, all_data_na, saved_file_path):
+    # todo: drop columns missing almost values
+    for column in all_data_na.index:
+        if all_data_na[column] > 40:
+            data.drop([column], axis=1, inplace=True)
+    data.to_csv(saved_file_path, index=False, encoding='utf-8-sig')
+    return data
+
+
+def inspect_outlier(data, inspect_features, target_features):
     import matplotlib.pyplot as plt  # Matlab-style plotting
     fig, ax = plt.subplots()
     ax.scatter(x=data[inspect_features], y=data[target_features])
-    plt.title("DISTRIBUTION: " + inspect_features + " - " + target_features)
+    plt.title("INSPECT OUTLIERS: " + inspect_features + " - " + target_features)
     plt.ylabel(target_features, fontsize=13)
     plt.xlabel(inspect_features, fontsize=13)
-    # plt.show()
+    plt.show()
 
 
 def analyze_target_features(data):
@@ -436,10 +500,12 @@ def analyze_target_features(data):
     import seaborn as sns
     from scipy import stats
 
-    sns.distplot(data['Giá'], fit=norm)  # todo: drop all fields with Giá = nan
+    sns.distplot(data['Price'], fit=norm)
+    # print("type of: ", type(data["Giá"]))
+    # print("value of: ", data["Giá"])
 
     # Get the fitted parameters used by the function
-    (mu, sigma) = norm.fit(data['Giá'])
+    (mu, sigma) = norm.fit(data['Price'])
     print('\n mu = {:.2f} and sigma = {:.2f}\n'.format(mu, sigma))
 
     # Now plot the distribution
@@ -449,5 +515,32 @@ def analyze_target_features(data):
 
     # Get also the QQ-plot
     fig = plt.figure()
-    res = stats.probplot(data['Giá'], plot=plt)
+    res = stats.probplot(data['Price'], plot=plt)
+    plt.show()
+
+
+def analyze_target_features_transform(data):
+    import matplotlib.pyplot as plt  # Matlab-style plotting
+    import seaborn as sns
+    from scipy import stats
+
+    # We use the numpy function log1p which  applies log(1+x) to all elements of the column
+    data["Price"] = np.log1p(data["Price"])
+
+    # Check the new distribution
+    sns.distplot(data["Price"], fit=norm)
+
+    # Get the fitted parameters used by the function
+    (mu, sigma) = norm.fit(data["Price"])
+    print('\n mu = {:.2f} and sigma = {:.2f}\n'.format(mu, sigma))
+
+    # Now plot the distribution
+    plt.legend(['Normal dist. ($\mu=$ {:.2f} and $\sigma=$ {:.2f} )'.format(mu, sigma)],
+               loc='best')
+    plt.ylabel('Frequency')
+    plt.title('Price distribution')
+
+    # Get also the QQ-plot
+    fig = plt.figure()
+    res = stats.probplot(data["Price"], plot=plt)
     plt.show()

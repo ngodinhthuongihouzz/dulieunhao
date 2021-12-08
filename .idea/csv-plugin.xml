@@ -17,14 +17,28 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\crawled\Demo_Edited_v1.csv">
+        <entry key="\input\crawled\train20211207_110259.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\crawled\Demo_[Edited].csv">
+        <entry key="\input\crawled\train20211207_110259[Dropped].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\crawled\train20211207_110259[Edited].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\crawled\train20211207_110259[FillUnsetData].csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
