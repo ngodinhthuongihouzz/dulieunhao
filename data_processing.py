@@ -40,10 +40,24 @@ def get_id(train, test):
     return train_id, test_id
 
 
+def vn_get_id(train, test):
+    # Save the 'ID' column
+    train_id = train['ID']
+    test_id = test['ID']
+    return train_id, test_id
+
+
 def drop_id(train, test):
     # Drop the  'Id' column since it's unnecessary for  the prediction process.
     train.drop("Id", axis=1, inplace=True)
     test.drop("Id", axis=1, inplace=True)
+    return train, test
+
+
+def vn_drop_id(train, test):
+    # Drop the  'ID' column since it's unnecessary for  the prediction process.
+    train.drop("ID", axis=1, inplace=True)
+    test.drop("ID", axis=1, inplace=True)
     return train, test
 
 
@@ -61,6 +75,16 @@ def concat_data(train, test):
     y_train = train.SalePrice.values
     all_data = pd.concat((train, test)).reset_index(drop=True)
     all_data.drop(['SalePrice'], axis=1, inplace=True)
+    return all_data, y_train, n_train, n_test
+
+
+def vn_concat_data(train, test):
+    # Concat train & test data
+    n_train = train.shape[0]
+    n_test = test.shape[0]
+    y_train = train.Price.values
+    all_data = pd.concat((train, test)).reset_index(drop=True)
+    all_data.drop(['Price'], axis=1, inplace=True)
     return all_data, y_train, n_train, n_test
 
 
@@ -100,6 +124,56 @@ def imputing_missing_values(all_data):
     all_data['Exterior2nd'] = all_data['Exterior2nd'].fillna(all_data['Exterior2nd'].mode()[0])
     all_data['SaleType'] = all_data['SaleType'].fillna(all_data['SaleType'].mode()[0])
     all_data['MSSubClass'] = all_data['MSSubClass'].fillna("None")
+    return all_data
+
+
+def vn_imputing_missing_values(all_data):
+    all_data["FormRE"] = all_data["FormRE"].fillna("None")
+    all_data["Province"] = all_data["Province"].fillna("None")
+    all_data["FloorNum"] = all_data["FloorNum"].fillna(0)
+    all_data["Area"] = all_data["Area"].fillna(0)
+    all_data["Height"] = all_data["Height"].fillna(0)
+    all_data["Width"] = all_data["Width"].fillna(0)
+    all_data["UsableArea"] = all_data["UsableArea"].fillna(0)
+    all_data["FrontLength"] = all_data["FrontLength"].fillna(0)
+    all_data["BackSideLength"] = all_data["BackSideLength"].fillna(0)
+    all_data["Direction"] = all_data["Direction"].fillna("None")
+    all_data["BalconyDirection"] = all_data["BalconyDirection"].fillna("None")
+    all_data["Corner"] = all_data["Corner"].fillna("None")
+    all_data["RoadInFront"] = all_data["RoadInFront"].fillna(0)
+    all_data["Juridical"] = all_data["Juridical"].fillna("None")
+    all_data["NumOfBed"] = all_data["NumOfBed"].fillna(0)
+    all_data["NumOfFloor"] = all_data["NumOfFloor"].fillna(0)
+    all_data["NumOfToilet"] = all_data["NumOfToilet"].fillna(0)
+    all_data["ConstructionYear"] = all_data["ConstructionYear"].fillna(0)
+    all_data["IsOwner"] = all_data["IsOwner"].fillna("None")
+    all_data["Furniture"] = all_data["Furniture"].fillna("None")
+    all_data["Terrace"] = all_data["Terrace"].fillna("None")
+    all_data["CarParking"] = all_data["CarParking"].fillna("None")
+    all_data["DinningRoom"] = all_data["DinningRoom"].fillna("None")
+    all_data["Kitchen"] = all_data["Kitchen"].fillna("None")
+    all_data["AirCond"] = all_data["AirCond"].fillna("None")
+    all_data["ADSL"] = all_data["ADSL"].fillna("None")
+    all_data["WashingMachine"] = all_data["WashingMachine"].fillna("None")
+    all_data["Balcony"] = all_data["Balcony"].fillna("None")
+    all_data["Fridge"] = all_data["Fridge"].fillna("None")
+    all_data["Wifi"] = all_data["Wifi"].fillna("None")
+    all_data["Pool"] = all_data["Pool"].fillna("None")
+    all_data["Basement"] = all_data["Basement"].fillna("None")
+    all_data["Park"] = all_data["Park"].fillna("None")
+    all_data["SuperMarket"] = all_data["SuperMarket"].fillna("None")
+    all_data["Clinics"] = all_data["Clinics"].fillna("None")
+    all_data["Sea"] = all_data["Sea"].fillna("None")
+    all_data["Hospital"] = all_data["Hospital"].fillna("None")
+    all_data["Church"] = all_data["Church"].fillna("None")
+    all_data["BusStation"] = all_data["BusStation"].fillna("None")
+    all_data["School"] = all_data["School"].fillna("None")
+    all_data["Temple"] = all_data["Temple"].fillna("None")
+    all_data["Airport"] = all_data["Airport"].fillna("None")
+    all_data["Preschool"] = all_data["Preschool"].fillna("None")
+    all_data["Characteristics"] = all_data["Characteristics"].fillna("None")
+    # all_data["PricePSM"] = all_data["PricePSM"].fillna(0)
+
     return all_data
 
 
@@ -161,7 +235,7 @@ def fill_unset_rows(data):
             # data.set_value(rec, "Area", height[rec] * width[rec], takeable=False)
             # data.
 
-    data.to_csv('input/crawled/train20211207_110259[FillUnsetData].csv', index=False, encoding='utf-8-sig')
+    data.to_csv('input/crawled/train20211207_110259[Input].csv', index=False, encoding='utf-8-sig')
     return data
 
 
@@ -188,9 +262,20 @@ def record_convert_num_to_string_values(all_data):
     return all_data
 
 
-def convert_num_to_string_values_test(all_data):
+def vn_convert_num_to_string_values(all_data):
     # MSSubClass=The building class
-    all_data['MSSubClass'] = all_data['MSSubClass'].apply(str)
+    all_data['FloorNum'] = all_data['FloorNum'].apply(str)
+    all_data['Area'] = all_data['Area'].apply(str)
+    all_data['Height'] = all_data['Height'].apply(str)
+    all_data['Width'] = all_data['Width'].apply(str)
+    all_data['UsableArea'] = all_data['UsableArea'].apply(str)
+    all_data['FrontLength'] = all_data['FrontLength'].apply(str)
+    all_data['BackSideLength'] = all_data['BackSideLength'].apply(str)
+    all_data['NumOfBed'] = all_data['NumOfBed'].apply(str)
+    all_data['NumOfFloor'] = all_data['NumOfFloor'].apply(str)
+    all_data['NumOfToilet'] = all_data['NumOfToilet'].apply(str)
+    all_data['ConstructionYear'] = all_data['ConstructionYear'].apply(str)
+    # all_data['PricePSM'] = all_data['PricePSM'].apply(str)
 
     # # Changing OverallCond into a categorical variable
     # all_data['OverallCond'] = all_data['OverallCond'].astype(str)
@@ -231,10 +316,14 @@ def label_encoding(all_data):
 
 
 # todo: ignore dummy data by labeling all categorical features to number
-def label_encoding_test(all_data):
+def vn_label_encoding(all_data):
     from sklearn.preprocessing import LabelEncoder
-    cols = ('LandSlope', 'LotShape', 'Street', 'Alley', 'MSSubClass',
-            'MSZoning', 'LandContour', 'LotConfig', 'Utilities', 'Neighborhood')  # không chừa một cột nào còn
+    cols = ('FormRE', 'Province', 'Direction', 'BalconyDirection', 'Corner', 'Juridical',
+            'IsOwner', 'Furniture', 'Terrace', 'CarParking', 'DinningRoom',
+            'Kitchen', 'AirCond', 'ADSL', 'WashingMachine', 'Balcony', 'Fridge',
+            'Wifi', 'Pool', 'Basement', 'Park', 'SuperMarket', 'Clinics', 'Sea',
+            'Hospital', 'Church', 'BusStation', 'School', 'Temple', 'Airport',
+            'Preschool', 'Characteristics')  # không chừa một cột nào còn
     # giá trị categorial -> warning "UserWarning: Usage of np.ndarray subset (sliced data) is not recommended due
     # to it will double the peak memory cost in LightGBM. _log_warning("Usage of np.ndarray subset (sliced data) is
     # not recommended " process columns, apply LabelEncoder to categorical features convert categorical features to
@@ -270,15 +359,28 @@ def label_encoding_loaded(all_data):
     return all_data
 
 
+def vn_label_encoding_loaded(all_data):
+    ori_encoder_dict = np.load('output/saved_models/label_encoder.npy', allow_pickle=True)
+    encoder_dict = ori_encoder_dict.tolist()
+    for key in encoder_dict.keys():
+        lbl = encoder_dict[key]
+        all_data[key] = lbl.transform(list(all_data[key].values))  # convert categorical features to number
+
+    # inspect shape
+    print('Shape all_data: {}'.format(all_data.shape))
+
+    return all_data
+
+
 def transform_numerical_to_categorical_values(all_data):
     all_data = convert_num_to_string_values(all_data)
     all_data = label_encoding(all_data)
     return all_data
 
 
-def transform_numerical_to_categorical_values_test(all_data):
-    all_data = convert_num_to_string_values_test(all_data)
-    all_data = label_encoding_test(all_data)
+def vn_transform_numerical_to_categorical_values(all_data):
+    all_data = vn_convert_num_to_string_values(all_data)
+    all_data = vn_label_encoding(all_data)
     return all_data
 
 
@@ -291,6 +393,12 @@ def load_transform_numerical_to_categorical_values(all_data):
 def record_load_transform_numerical_to_categorical_values(all_data):
     all_data = record_convert_num_to_string_values(all_data)
     all_data = label_encoding_loaded(all_data)
+    return all_data
+
+
+def vn_record_load_transform_numerical_to_categorical_values(all_data):
+    all_data = vn_convert_num_to_string_values(all_data)
+    all_data = vn_label_encoding_loaded(all_data)
     return all_data
 
 
@@ -356,7 +464,7 @@ def getting_new_train_test(all_data, n_train):
     return all_data, train, test
 
 
-def convert_crawled_to_input_data(crawled_path, out_file_path):
+def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_file_path):
     from timeit import default_timer as timer
     start = timer()
     print("start convert_crawled_to_input_data ...")
@@ -364,6 +472,7 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
 
     # todo: get each row of data to list
     form_re = crawled_data["FormRE"].tolist()  # Loại Hình BĐS
+    province = crawled_data["Province"].tolist()  # Tỉnh Thành
     floor_num = crawled_data["FloorNum"].tolist()  # Tầng Số
     area = crawled_data["Area"].tolist()  # Diện Tích
     height = crawled_data["Height"].tolist()  # Chiều Dài
@@ -408,39 +517,67 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     airport = crawled_data["Airport"].tolist()  # Sân Bay
     pre_school = crawled_data["Preschool"].tolist()  # Trường Mầm Non
     characteristics = crawled_data["Characteristics"].tolist()  # Đặc Tính
-    price_psm = crawled_data["PricePSM"].tolist()  # Giá / m2
+    # price_psm = crawled_data["PricePSM"].tolist()  # Giá / m2
     price = crawled_data["Price"].tolist()  # Giá
 
     # todo: create/reconstruct CSV file to train data
-    file = open(out_file_path, "w", newline='', encoding='utf-8-sig')
-    writer = csv.writer(file)
+    train_file = open(out_train_file_path, "w", newline='', encoding='utf-8-sig')
+    test_file = open(out_test_file_path, "w", newline='', encoding='utf-8-sig')
+    train_writer = csv.writer(train_file)
+    test_writer = csv.writer(test_file)
     print("n records: ", crawled_data.shape[0])
-    writer.writerow(["ID", "FormRE", "FloorNum", "Area", "Height", "Width", "UsableArea",
-                     "FrontLength", "BackSideLength", "Direction", "BalconyDirection", "Corner", "RoadInFront",
-                     "Juridical", "NumOfBed", "NumOfFloor", "NumOfToilet", "ConstructionYear", "IsOwner",
-                     "Furniture", "Terrace", "CarParking", "DinningRoom", "Kitchen", "AirCond",
-                     "ADSL", "WashingMachine", "Balcony", "Fridge", "Wifi", "Pool",
-                     "Basement", "Park", "SuperMarket", "Clinics", "Sea", "Hospital", "Church",
-                     "BusStation", "School", "Temple", "Airport", "Preschool", "Characteristics", "PricePSM", "Price"])
+    train_writer.writerow(["ID", "FormRE", "Province", "FloorNum", "Area", "Height", "Width", "UsableArea",
+                           "FrontLength", "BackSideLength", "Direction", "BalconyDirection", "Corner", "RoadInFront",
+                           "Juridical", "NumOfBed", "NumOfFloor", "NumOfToilet", "ConstructionYear", "IsOwner",
+                           "Furniture", "Terrace", "CarParking", "DinningRoom", "Kitchen", "AirCond",
+                           "ADSL", "WashingMachine", "Balcony", "Fridge", "Wifi", "Pool",
+                           "Basement", "Park", "SuperMarket", "Clinics", "Sea", "Hospital", "Church",
+                           "BusStation", "School", "Temple", "Airport", "Preschool", "Characteristics",
+                           "Price"])
+    test_writer.writerow(["ID", "FormRE", "Province", "FloorNum", "Area", "Height", "Width", "UsableArea",
+                          "FrontLength", "BackSideLength", "Direction", "BalconyDirection", "Corner", "RoadInFront",
+                          "Juridical", "NumOfBed", "NumOfFloor", "NumOfToilet", "ConstructionYear", "IsOwner",
+                          "Furniture", "Terrace", "CarParking", "DinningRoom", "Kitchen", "AirCond",
+                          "ADSL", "WashingMachine", "Balcony", "Fridge", "Wifi", "Pool",
+                          "Basement", "Park", "SuperMarket", "Clinics", "Sea", "Hospital", "Church",
+                          "BusStation", "School", "Temple", "Airport", "Preschool", "Characteristics"])
 
     import math
     id_rec = 0
-    for rec in range(crawled_data.shape[0]):
+    # for rec in range(crawled_data.shape[0]):
+    for rec in range(2000):
         # todo: drop all fields with Giá = nan
         if is_valid_record(width[rec], height[rec], area[rec], price[rec]):
-            writer.writerow([id_rec + 1, form_re[rec], floor_num[rec], area[rec], height[rec], width[rec],
-                             usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
-                             balcony_direction[rec], corner[rec], road_in_front[rec], juridical[rec], num_of_bed[rec],
-                             num_of_floor[rec], num_of_toilet[rec], construction_year[rec], is_owner[rec],
-                             furniture[rec],
-                             terrace[rec], car_parking[rec], dinning_room[rec], kitchen[rec], air_cond[rec], adsl[rec],
-                             washing_machine[rec], balcony[rec], fridge[rec], wifi[rec], pool[rec], basement[rec],
-                             park[rec],
-                             super_market[rec], clinics[rec], sea[rec], hospital[rec], church[rec], bus_station[rec],
-                             school[rec], temple[rec], airport[rec], pre_school[rec], characteristics[rec],
-                             price_psm[rec], price[rec]])
+            # if id_rec < crawled_data.shape[0]/2:
+            if id_rec < 1000:
+                train_writer.writerow(
+                    [id_rec + 1, form_re[rec], province[rec], floor_num[rec], area[rec], height[rec], width[rec],
+                     usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
+                     balcony_direction[rec], corner[rec], road_in_front[rec], juridical[rec], num_of_bed[rec],
+                     num_of_floor[rec], num_of_toilet[rec], construction_year[rec], is_owner[rec],
+                     furniture[rec],
+                     terrace[rec], car_parking[rec], dinning_room[rec], kitchen[rec], air_cond[rec], adsl[rec],
+                     washing_machine[rec], balcony[rec], fridge[rec], wifi[rec], pool[rec], basement[rec],
+                     park[rec],
+                     super_market[rec], clinics[rec], sea[rec], hospital[rec], church[rec], bus_station[rec],
+                     school[rec], temple[rec], airport[rec], pre_school[rec], characteristics[rec],
+                     price[rec]])
+            else:
+                test_writer.writerow(
+                    [id_rec + 1, form_re[rec], province[rec], floor_num[rec], area[rec], height[rec], width[rec],
+                     usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
+                     balcony_direction[rec], corner[rec], road_in_front[rec], juridical[rec], num_of_bed[rec],
+                     num_of_floor[rec], num_of_toilet[rec], construction_year[rec], is_owner[rec],
+                     furniture[rec],
+                     terrace[rec], car_parking[rec], dinning_room[rec], kitchen[rec], air_cond[rec], adsl[rec],
+                     washing_machine[rec], balcony[rec], fridge[rec], wifi[rec], pool[rec], basement[rec],
+                     park[rec],
+                     super_market[rec], clinics[rec], sea[rec], hospital[rec], church[rec], bus_station[rec],
+                     school[rec], temple[rec], airport[rec], pre_school[rec], characteristics[rec]])
+
             id_rec += 1
-    file.close()
+    train_file.close()
+    test_file.close()
 
     # area = crawled_data["Area"].tolist()
     # print("type of area:", type(area))
@@ -456,7 +593,7 @@ def convert_crawled_to_input_data(crawled_path, out_file_path):
     # save new file
     # crawled_data.to_csv(input_des_path, index=False, encoding='utf-8-sig')  # encoding: 'utf-8-sig' for Vietnamese
     print("done!")
-    print("Convert CSV(Edited) time: ", timer() - start, "(s)")
+    print("Convert CSV time: ", timer() - start, "(s)")
     return
 
 
@@ -478,10 +615,10 @@ def is_valid_record(width, height, area, price):
 
 def drop_data_and_save(data, all_data_na, saved_file_path):
     # todo: drop columns missing almost values
-    for column in all_data_na.index:
-        if all_data_na[column] > 40:
-            data.drop([column], axis=1, inplace=True)
-    data.to_csv(saved_file_path, index=False, encoding='utf-8-sig')
+    # for column in all_data_na.index:
+    #     if all_data_na[column] > 40:
+    #         data.drop([column], axis=1, inplace=True)
+    # data.to_csv(saved_file_path, index=False, encoding='utf-8-sig')
     return data
 
 

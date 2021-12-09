@@ -45,6 +45,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\input\crawled\train20211207_110259[Input].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\predict\record1.csv">
           <value>
             <Attribute>
@@ -73,6 +80,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\input\predict\vn_record1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\test.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\test\test.csv">
           <value>
             <Attribute>
@@ -80,7 +101,42 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\input\test\train20211207_110259[Edited].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\test\train20211207_110259[test].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\train.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\train\train.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\train\train20211207_110259[Edited].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\train\train20211207_110259[train].csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
