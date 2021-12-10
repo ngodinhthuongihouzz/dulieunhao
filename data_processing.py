@@ -315,6 +315,30 @@ def label_encoding(all_data):
     return all_data
 
 
+def label_encoding_test(all_data):
+    from sklearn.preprocessing import LabelEncoder
+    cols = ('MSSubClass', 'MSZoning', 'Street', 'Alley', 'LotShape', 'LandContour',
+            'LotConfig', 'LandSlope', 'Neighborhood'
+            )
+    # process columns, apply LabelEncoder to categorical features
+    # convert categorical features to number
+    lbl_dict = dict()
+    for c in cols:
+        lbl = LabelEncoder()
+        lbl.fit(list(all_data[c].values))  # get all type of categorical features
+        # print("[test]type of values: ", type(all_data[c].values))
+        # print("[test] type of list values: ", type(list(all_data[c].values)))
+        lbl_dict[c] = lbl
+        all_data[c] = lbl.transform(list(all_data[c].values))  # convert categorical features to number
+
+    # SAVE
+    np.save('output/saved_models/label_encoder.npy', lbl_dict)
+    # inspect shape
+    print('Shape all_data: {}'.format(all_data.shape))
+
+    return all_data
+
+
 # todo: ignore dummy data by labeling all categorical features to number
 def vn_label_encoding(all_data):
     from sklearn.preprocessing import LabelEncoder
@@ -375,6 +399,12 @@ def vn_label_encoding_loaded(all_data):
 def transform_numerical_to_categorical_values(all_data):
     all_data = convert_num_to_string_values(all_data)
     all_data = label_encoding(all_data)
+    return all_data
+
+
+def transform_numerical_to_categorical_values_test(all_data):
+    all_data = record_convert_num_to_string_values(all_data)
+    all_data = label_encoding_test(all_data)
     return all_data
 
 
@@ -545,11 +575,11 @@ def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_fi
     import math
     id_rec = 0
     # for rec in range(crawled_data.shape[0]):
-    for rec in range(2000):
+    for rec in range(5000):
         # todo: drop all fields with Giá = nan
         if is_valid_record(width[rec], height[rec], area[rec], price[rec]):
             # if id_rec < crawled_data.shape[0]/2:
-            if id_rec < 1000:
+            if id_rec < 2500:
                 train_writer.writerow(
                     [id_rec + 1, form_re[rec], province[rec], floor_num[rec], area[rec], height[rec], width[rec],
                      usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],

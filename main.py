@@ -11,8 +11,8 @@ if __name__ == '__main__':
     # DATA PROCESSING ############
     import data_processing as dp
 
-    train, test = dp.read_multiple_inputs(train_paths=dp.get_all_csv_in_directory('input/train/*.csv'),
-                                          test_paths=dp.get_all_csv_in_directory('input/test/*.csv'))
+    train, test = dp.read_multiple_inputs(train_paths=dp.get_all_csv_in_directory('input/train/train.csv'),
+                                          test_paths=dp.get_all_csv_in_directory('input/test/test.csv'))
 
     # train, test = dp.read_input(train_path='input/train.csv', test_path='input/record1.csv')
 
