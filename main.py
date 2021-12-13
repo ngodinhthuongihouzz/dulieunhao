@@ -70,7 +70,8 @@ if __name__ == '__main__':
     mlg.test_models(trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, train, y_train)
 
     # Predict
-    mlg.run_predict_models('output/submission.csv', trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, test, test_id)
+    mlg.run_predict_models('output/submission.csv', trained_stacked_averaged_models, trained_model_xgb,
+                           trained_model_lgb, test, test_id)
 
     # Time calculate
     print("Total time: ", timer() - start)

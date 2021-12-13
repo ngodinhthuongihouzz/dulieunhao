@@ -31,6 +31,8 @@ if __name__ == '__main__':
 
     record = pd.get_dummies(record)
 
+    print("Size after get dummies: ", record.shape)
+
     # PREDICTING ############
     import modelling as mlg
 

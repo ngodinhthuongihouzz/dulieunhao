@@ -254,6 +254,7 @@ def convert_num_to_string_values(all_data):
 def record_convert_num_to_string_values(all_data):
     # MSSubClass=The building class
     all_data['MSSubClass'] = all_data['MSSubClass'].apply(str)
+
     # Changing OverallCond into a categorical variable
     # all_data['OverallCond'] = all_data['OverallCond'].astype(str)
     # Year and month sold are transformed into categorical features.
@@ -316,10 +317,20 @@ def label_encoding(all_data):
 
 
 def label_encoding_test(all_data):
+    # check type here
+    # print("type of columns LotFrontage: ", type(all_data['LotFrontage'][0]))
+    # print("values: ", all_data['LotFrontage'].dtypes)
+    # print("type of columns Neighborhood: ", type(all_data['Neighborhood'][0]))
+    # print("values: ", all_data['Neighborhood'].dtypes)
+    print("INSPECT ALL COLUMNS'S DATATYPE")
+    for col in all_data.columns:
+        print("type of ", col, ": ", all_data[col].dtypes)
+
     from sklearn.preprocessing import LabelEncoder
     cols = ('MSSubClass', 'MSZoning', 'Street', 'Alley', 'LotShape', 'LandContour',
             'LotConfig', 'LandSlope', 'Neighborhood'
             )
+
     # process columns, apply LabelEncoder to categorical features
     # convert categorical features to number
     lbl_dict = dict()
@@ -341,6 +352,10 @@ def label_encoding_test(all_data):
 
 # todo: ignore dummy data by labeling all categorical features to number
 def vn_label_encoding(all_data):
+    print("INSPECT ALL COLUMNS'S DATATYPE")
+    for col in all_data.columns:
+        print("type of ", col, ": ", all_data[col].dtypes)
+    # todo: write new functions to add cols list of object columns types
     from sklearn.preprocessing import LabelEncoder
     cols = ('FormRE', 'Province', 'Direction', 'BalconyDirection', 'Corner', 'Juridical',
             'IsOwner', 'Furniture', 'Terrace', 'CarParking', 'DinningRoom',
@@ -348,6 +363,7 @@ def vn_label_encoding(all_data):
             'Wifi', 'Pool', 'Basement', 'Park', 'SuperMarket', 'Clinics', 'Sea',
             'Hospital', 'Church', 'BusStation', 'School', 'Temple', 'Airport',
             'Preschool', 'Characteristics')  # không chừa một cột nào còn
+    # Width is categorical or number (categorical), todo add 'Width',
     # giá trị categorial -> warning "UserWarning: Usage of np.ndarray subset (sliced data) is not recommended due
     # to it will double the peak memory cost in LightGBM. _log_warning("Usage of np.ndarray subset (sliced data) is
     # not recommended " process columns, apply LabelEncoder to categorical features convert categorical features to
@@ -488,7 +504,7 @@ def box_cox_transform_skewed_features_loaded(record):
 # example: MSZoning : RL/RH -> dummy will create 2 columns: MSZoning_RL , MSZoning_RH
 def getting_new_train_test(all_data, n_train):
     all_data = pd.get_dummies(all_data)
-    print(all_data.shape)
+    print("Size after get dummies:", all_data.shape)
     train = all_data[:n_train]
     test = all_data[n_train:]
     return all_data, train, test
@@ -579,7 +595,7 @@ def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_fi
         # todo: drop all fields with Giá = nan
         if is_valid_record(width[rec], height[rec], area[rec], price[rec]):
             # if id_rec < crawled_data.shape[0]/2:
-            if id_rec < 2500:
+            if id_rec < 2000:
                 train_writer.writerow(
                     [id_rec + 1, form_re[rec], province[rec], floor_num[rec], area[rec], height[rec], width[rec],
                      usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
