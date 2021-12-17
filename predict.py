@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # SKEWED FEATURES
     record = dp.box_cox_transform_skewed_features_loaded(record)
 
-    print("type: ", type(record))
+    print("Type of record: ", type(record))
     # Getting new record
 
     print(record.shape)

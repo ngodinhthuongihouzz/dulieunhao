@@ -128,6 +128,12 @@ def imputing_missing_values(all_data):
 
 
 def vn_imputing_missing_values(all_data):
+    # TEST all datatype of columns
+    # print("INSPECT ALL COLUMNS'S DATATYPE [BEFORE IMPUTE]")
+    # for col in all_data.columns:
+    #     print("type of ", col, ": ", all_data[col].dtypes)
+
+    # todo refilling values here for categorical features which has values is number ("None" -> 0.0)
     all_data["FormRE"] = all_data["FormRE"].fillna("None")
     all_data["Province"] = all_data["Province"].fillna("None")
     all_data["FloorNum"] = all_data["FloorNum"].fillna(0)
@@ -173,6 +179,11 @@ def vn_imputing_missing_values(all_data):
     all_data["Preschool"] = all_data["Preschool"].fillna("None")
     all_data["Characteristics"] = all_data["Characteristics"].fillna("None")
     # all_data["PricePSM"] = all_data["PricePSM"].fillna(0)
+
+    # TEST all datatype of columns
+    # print("INSPECT ALL COLUMNS'S DATATYPE [AFTER IMPUTE]")
+    # for col in all_data.columns:
+    #     print("type of ", col, ": ", all_data[col].dtypes)
 
     return all_data
 
@@ -263,19 +274,27 @@ def record_convert_num_to_string_values(all_data):
     return all_data
 
 
+# todo: this function only apply for columns which has categorical features,
+#  and it was presented by numbers
 def vn_convert_num_to_string_values(all_data):
+    # TEST all datatype of columns
+    # print("INSPECT ALL COLUMNS'S DATATYPE [BEFORE CONVERT TO STRING]")
+    # for col in all_data.columns:
+    #     print("type of ", col, ": ", all_data[col].dtypes)
+
     # MSSubClass=The building class
-    all_data['FloorNum'] = all_data['FloorNum'].apply(str)
-    all_data['Area'] = all_data['Area'].apply(str)
-    all_data['Height'] = all_data['Height'].apply(str)
-    all_data['Width'] = all_data['Width'].apply(str)
-    all_data['UsableArea'] = all_data['UsableArea'].apply(str)
-    all_data['FrontLength'] = all_data['FrontLength'].apply(str)
-    all_data['BackSideLength'] = all_data['BackSideLength'].apply(str)
-    all_data['NumOfBed'] = all_data['NumOfBed'].apply(str)
-    all_data['NumOfFloor'] = all_data['NumOfFloor'].apply(str)
-    all_data['NumOfToilet'] = all_data['NumOfToilet'].apply(str)
-    all_data['ConstructionYear'] = all_data['ConstructionYear'].apply(str)
+    # all_data['FloorNum'] = all_data['FloorNum'].apply(str)
+    # all_data['Area'] = all_data['Area'].apply(str)
+    # all_data['Height'] = all_data['Height'].apply(str)
+    # all_data['Width'] = all_data['Width'].apply(str)
+    # all_data['UsableArea'] = all_data['UsableArea'].apply(str) // todo: remove apply string here for number
+    # all_data['FrontLength'] = all_data['FrontLength'].apply(str)
+    # all_data['BackSideLength'] = all_data['BackSideLength'].apply(str)
+    # all_data['RoadInFront'] = all_data['RoadInFront'].apply(str)
+    # all_data['NumOfBed'] = all_data['NumOfBed'].apply(str)
+    # all_data['NumOfFloor'] = all_data['NumOfFloor'].apply(str)
+    # all_data['NumOfToilet'] = all_data['NumOfToilet'].apply(str)
+    # all_data['ConstructionYear'] = all_data['ConstructionYear'].apply(str)
     # all_data['PricePSM'] = all_data['PricePSM'].apply(str)
 
     # # Changing OverallCond into a categorical variable
@@ -283,6 +302,11 @@ def vn_convert_num_to_string_values(all_data):
     # # Year and month sold are transformed into categorical features.
     # all_data['YrSold'] = all_data['YrSold'].astype(str)
     # all_data['MoSold'] = all_data['MoSold'].astype(str)
+
+    # TEST all datatype of columns
+    # print("INSPECT ALL COLUMNS'S DATATYPE [AFTER CONVERT TO STRING]")
+    # for col in all_data.columns:
+    #     print("type of ", col, ": ", all_data[col].dtypes)
 
     return all_data
 
@@ -322,9 +346,10 @@ def label_encoding_test(all_data):
     # print("values: ", all_data['LotFrontage'].dtypes)
     # print("type of columns Neighborhood: ", type(all_data['Neighborhood'][0]))
     # print("values: ", all_data['Neighborhood'].dtypes)
-    print("INSPECT ALL COLUMNS'S DATATYPE")
-    for col in all_data.columns:
-        print("type of ", col, ": ", all_data[col].dtypes)
+
+    # print("INSPECT ALL COLUMNS'S DATATYPE")
+    # for col in all_data.columns:
+    #     print("type of ", col, ": ", all_data[col].dtypes)
 
     from sklearn.preprocessing import LabelEncoder
     cols = ('MSSubClass', 'MSZoning', 'Street', 'Alley', 'LotShape', 'LandContour',
@@ -352,18 +377,19 @@ def label_encoding_test(all_data):
 
 # todo: ignore dummy data by labeling all categorical features to number
 def vn_label_encoding(all_data):
-    print("INSPECT ALL COLUMNS'S DATATYPE")
+    print("INSPECT ALL COLUMNS'S DATATYPE [LABEL ENCODING]")
     for col in all_data.columns:
         print("type of ", col, ": ", all_data[col].dtypes)
-    # todo: write new functions to add cols list of object columns types
+
     from sklearn.preprocessing import LabelEncoder
-    cols = ('FormRE', 'Province', 'Direction', 'BalconyDirection', 'Corner', 'Juridical',
-            'IsOwner', 'Furniture', 'Terrace', 'CarParking', 'DinningRoom',
+    # todo: add all categorical features here
+    cols = ('FormRE', 'Province', 'Direction', 'BalconyDirection', 'Corner',
+            'Juridical', 'IsOwner', 'Furniture', 'Terrace', 'CarParking', 'DinningRoom',
             'Kitchen', 'AirCond', 'ADSL', 'WashingMachine', 'Balcony', 'Fridge',
             'Wifi', 'Pool', 'Basement', 'Park', 'SuperMarket', 'Clinics', 'Sea',
             'Hospital', 'Church', 'BusStation', 'School', 'Temple', 'Airport',
             'Preschool', 'Characteristics')  # không chừa một cột nào còn
-    # Width is categorical or number (categorical), todo add 'Width',
+    # Width is categorical or number (categorical), todo add 'Width'
     # giá trị categorial -> warning "UserWarning: Usage of np.ndarray subset (sliced data) is not recommended due
     # to it will double the peak memory cost in LightGBM. _log_warning("Usage of np.ndarray subset (sliced data) is
     # not recommended " process columns, apply LabelEncoder to categorical features convert categorical features to
@@ -516,6 +542,11 @@ def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_fi
     print("start convert_crawled_to_input_data ...")
     crawled_data = pd.read_csv(crawled_path)
 
+    # TEST all datatype of columns
+    # print("INSPECT ALL COLUMNS'S DATATYPE")
+    # for col in crawled_data.columns:
+    #     print("type of ", col, ": ", crawled_data[col].dtypes)
+
     # todo: get each row of data to list
     form_re = crawled_data["FormRE"].tolist()  # Loại Hình BĐS
     province = crawled_data["Province"].tolist()  # Tỉnh Thành
@@ -590,12 +621,12 @@ def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_fi
 
     import math
     id_rec = 0
-    # for rec in range(crawled_data.shape[0]):
-    for rec in range(5000):
+    for rec in range(crawled_data.shape[0]):
+        # for rec in range(19000):
         # todo: drop all fields with Giá = nan
         if is_valid_record(width[rec], height[rec], area[rec], price[rec]):
-            # if id_rec < crawled_data.shape[0]/2:
-            if id_rec < 2000:
+            if id_rec < crawled_data.shape[0] / 1.4:
+                # if id_rec < 9000:
                 train_writer.writerow(
                     [id_rec + 1, form_re[rec], province[rec], floor_num[rec], area[rec], height[rec], width[rec],
                      usable_area[rec], front_length[rec], back_side_length[rec], direction[rec],
@@ -657,6 +688,17 @@ def is_valid_record(width, height, area, price):
         return False
     else:
         return True
+
+
+def is_belong_to_province(province_data, province_id=-1):
+    # Filter for all provinces
+    if province_id == -1:
+        return True
+    # Filter for only 1 specific province
+    elif province_data == province_id:
+        return True
+    else:
+        return False
 
 
 def drop_data_and_save(data, all_data_na, saved_file_path):

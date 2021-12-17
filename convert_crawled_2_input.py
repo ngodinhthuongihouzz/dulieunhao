@@ -22,7 +22,7 @@ dp.convert_crawled_to_input_data("input/crawled/train20211207_110259.csv",
 # todo: delete_outliers, check later for each features and remove unbalanced data if any for number only
 # dp.inspect_outlier(data, 'Diện Tích', 'Giá')
 # dp.inspect_outlier(data, 'DTSD', 'Giá')
-# dp.inspect_outlier(data, 'Height', 'Price')
+# dp.inspect_outlier(data, 'UsableArea', 'Price')
 # dp.inspect_outlier(data, 'Trường Học', 'Giá') # for boolean didn't work
 
 # inspect target variable (Giá)

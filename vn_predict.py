@@ -9,7 +9,7 @@ if __name__ == '__main__':
     # DATA PROCESSING ############
     import data_processing as dp
 
-    record = dp.read_single_predict_input(predict_path='input/predict/vn_record1.csv')
+    record = dp.read_single_predict_input(predict_path='input/predict/vn_record2.csv')
     print("***Input: \n", record.to_string())
     record_id = record['ID']
     record.drop("ID", axis=1, inplace=True)
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # SKEWED FEATURES
     record = dp.box_cox_transform_skewed_features_loaded(record)
 
-    print("type: ", type(record))
+    print("Type of record: ", type(record))
     # Getting new record
 
     print(record.shape)

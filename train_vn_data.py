@@ -14,6 +14,11 @@ if __name__ == '__main__':
     train, test = dp.read_multiple_inputs(train_paths=dp.get_all_csv_in_directory('input/train/train20211207_110259*.csv'),
                                           test_paths=dp.get_all_csv_in_directory('input/test/train20211207_110259*.csv'))
 
+    # TEST all datatype of columns
+    # print("INSPECT ALL COLUMNS'S DATATYPE [TRAIN]")
+    # for col in train.columns:
+    #     print("type of ", col, ": ", train[col].dtypes)
+
     # train, test = dp.read_input(train_path='input/train.csv', test_path='input/record1.csv')
 
     train_id, test_id = dp.vn_get_id(train, test)

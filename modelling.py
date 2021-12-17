@@ -63,9 +63,11 @@ class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
             for train_index, holdout_index in kfold.split(X, y):
                 instance = clone(model)
                 self.base_models_[i].append(instance)
-                instance.fit(X[train_index], y[train_index])
+                instance.fit(X[train_index], y[train_index])  # todo: check memory problem here:
+                # numpy.core._exceptions.MemoryError: Unable to allocate 30.2 GiB for an array with shape (63671,
+                # 63671) and data type float64
                 y_pred = instance.predict(X[holdout_index])
-                out_of_fold_predictions[holdout_index, i] = y_pred
+                out_of_fold_predictions[holdout_index, i] = y_pred  # todo: break here to get output
 
         # Now train the cloned  meta-model using the out-of-fold predictions as new feature
         self.meta_model_.fit(out_of_fold_predictions, y)
@@ -94,6 +96,14 @@ def rmsle_cv(model, train, y_train):
 
 def rmsle(y, y_pred):
     return np.sqrt(mean_squared_error(y, y_pred))
+
+
+def accuracy_loss_percentage(y, y_pred):
+    return np.mean((abs(y_pred - y) / y) * 100)
+
+
+def accuracy_correct_percentage(y, y_pred):
+    return 100 - np.mean((abs(y_pred - y) / y) * 100)
 
 
 # Validation function
@@ -218,6 +228,12 @@ def test_models(trained_stacked_averaged_models, trained_model_xgb, trained_mode
     lgb_train_pred = trained_model_lgb.predict(train)
     print('RMSLE score on train data [mean squared error regression loss]: ')
     print(rmsle(y_train, stacked_train_pred * 0.70 + xgb_train_pred * 0.15 + lgb_train_pred * 0.15))
+
+    print('ACCURACY score on train data [mean accuracy loss percentage]: ')
+    print(accuracy_loss_percentage(y_train, stacked_train_pred * 0.70 + xgb_train_pred * 0.15 + lgb_train_pred * 0.15), "%")
+
+    print('ACCURACY score on train data [mean accuracy correction percentage]: ')
+    print(accuracy_correct_percentage(y_train, stacked_train_pred * 0.70 + xgb_train_pred * 0.15 + lgb_train_pred * 0.15), "%")
 
 
 def run_predict_models(out_path, trained_stacked_averaged_models, trained_model_xgb, trained_model_lgb, test, test_ID):

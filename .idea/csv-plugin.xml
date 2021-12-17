@@ -24,28 +24,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\crawled\train20211207_110259[Dropped].csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\input\crawled\train20211207_110259[Edited].csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\input\crawled\train20211207_110259[FillUnsetData].csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\input\crawled\train20211207_110259[Input].csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -87,7 +66,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\test.csv">
+        <entry key="\input\predict\vn_record2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\predict\vn_record3.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -101,13 +87,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\test\train20211207_110259[Edited].csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\input\test\train20211207_110259[test].csv">
           <value>
             <Attribute>
@@ -115,21 +94,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\input\train.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\input\train\train.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\input\train\train20211207_110259[Edited].csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -172,6 +137,13 @@
           </value>
         </entry>
         <entry key="\samples\train.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\samples\train20211214_1.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
