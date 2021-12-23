@@ -52,6 +52,9 @@ class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
 
     # We again fit the data on clones of the original models
     def fit(self, X, y):
+        # [DEBUG]
+        print("[DEBUG] X: ", X.shape, ", y: ", y.shape)
+
         self.base_models_ = [list() for x in self.base_models]  # convert tuple base_models to list base_models_
         self.meta_model_ = clone(self.meta_model)
         kfold = KFold(n_splits=self.n_folds, shuffle=True, random_state=156)
@@ -64,8 +67,19 @@ class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
                 instance = clone(model)
                 self.base_models_[i].append(instance)
                 instance.fit(X[train_index], y[train_index])  # todo: check memory problem here:
-                # numpy.core._exceptions.MemoryError: Unable to allocate 30.2 GiB for an array with shape (63671,
-                # 63671) and data type float64
+                # numpy.core._exceptions.MemoryError: Unable to allocate 30.2 = float64 (8 byte * 63671 * 63671 / (
+                # 1024*1024*1024)) GiB for an array with shape (63671, 63671) and data type float64
+                # https://stackoverflow.com/questions/57507832/unable-to-allocate-array-with-shape-and-data-type [TEST]
+                print("[DEBUG] ", i, ":", train_index, ":",  train_index.size, ":", holdout_index, ":", holdout_index.size)
+                import sys
+                print("[DEBUG] instance SZ=", sys.getsizeof(instance))
+                print("[DEBUG] X SZ=", sys.getsizeof(X[train_index]), ", y SZ=", sys.getsizeof(y[train_index]))
+                import os, psutil
+                process = psutil.Process(os.getpid())
+                print("MemoryInfo: ", process.memory_info().rss / (1024 * 1024), "MB")  # in MB
+                print("MemoryInfo pagefile: ", process.memory_info().pagefile)
+                print("MemoryInfo peak_pagefile: ", process.memory_info().peak_pagefile)
+
                 y_pred = instance.predict(X[holdout_index])
                 out_of_fold_predictions[holdout_index, i] = y_pred  # todo: break here to get output
 

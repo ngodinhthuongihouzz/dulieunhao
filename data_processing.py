@@ -134,8 +134,8 @@ def vn_imputing_missing_values(all_data):
     #     print("type of ", col, ": ", all_data[col].dtypes)
 
     # todo refilling values here for categorical features which has values is number ("None" -> 0.0)
-    all_data["FormRE"] = all_data["FormRE"].fillna("None")
-    all_data["Province"] = all_data["Province"].fillna("None")
+    all_data["FormRE"] = all_data["FormRE"].fillna(0)
+    all_data["Province"] = all_data["Province"].fillna(0)
     all_data["FloorNum"] = all_data["FloorNum"].fillna(0)
     all_data["Area"] = all_data["Area"].fillna(0)
     all_data["Height"] = all_data["Height"].fillna(0)
@@ -143,11 +143,11 @@ def vn_imputing_missing_values(all_data):
     all_data["UsableArea"] = all_data["UsableArea"].fillna(0)
     all_data["FrontLength"] = all_data["FrontLength"].fillna(0)
     all_data["BackSideLength"] = all_data["BackSideLength"].fillna(0)
-    all_data["Direction"] = all_data["Direction"].fillna("None")
-    all_data["BalconyDirection"] = all_data["BalconyDirection"].fillna("None")
+    all_data["Direction"] = all_data["Direction"].fillna(0)
+    all_data["BalconyDirection"] = all_data["BalconyDirection"].fillna(0)
     all_data["Corner"] = all_data["Corner"].fillna("None")
     all_data["RoadInFront"] = all_data["RoadInFront"].fillna(0)
-    all_data["Juridical"] = all_data["Juridical"].fillna("None")
+    all_data["Juridical"] = all_data["Juridical"].fillna(0)
     all_data["NumOfBed"] = all_data["NumOfBed"].fillna(0)
     all_data["NumOfFloor"] = all_data["NumOfFloor"].fillna(0)
     all_data["NumOfToilet"] = all_data["NumOfToilet"].fillna(0)
@@ -177,7 +177,7 @@ def vn_imputing_missing_values(all_data):
     all_data["Temple"] = all_data["Temple"].fillna("None")
     all_data["Airport"] = all_data["Airport"].fillna("None")
     all_data["Preschool"] = all_data["Preschool"].fillna("None")
-    all_data["Characteristics"] = all_data["Characteristics"].fillna("None")
+    all_data["Characteristics"] = all_data["Characteristics"].fillna(0)
     # all_data["PricePSM"] = all_data["PricePSM"].fillna(0)
 
     # TEST all datatype of columns
@@ -282,13 +282,14 @@ def vn_convert_num_to_string_values(all_data):
     # for col in all_data.columns:
     #     print("type of ", col, ": ", all_data[col].dtypes)
 
-    # MSSubClass=The building class
-    # all_data['FloorNum'] = all_data['FloorNum'].apply(str)
-    # all_data['Area'] = all_data['Area'].apply(str)
-    # all_data['Height'] = all_data['Height'].apply(str)
-    # all_data['Width'] = all_data['Width'].apply(str)
-    # all_data['UsableArea'] = all_data['UsableArea'].apply(str) // todo: remove apply string here for number
-    # all_data['FrontLength'] = all_data['FrontLength'].apply(str)
+    # apply string here for number
+    all_data['FormRE'] = all_data['FormRE'].apply(str)
+    all_data['Province'] = all_data['Province'].apply(str)
+    all_data['Direction'] = all_data['Direction'].apply(str)
+    all_data['BalconyDirection'] = all_data['BalconyDirection'].apply(str)
+    all_data['Juridical'] = all_data['Juridical'].apply(str)
+    all_data['Characteristics'] = all_data['Characteristics'].apply(str)
+
     # all_data['BackSideLength'] = all_data['BackSideLength'].apply(str)
     # all_data['RoadInFront'] = all_data['RoadInFront'].apply(str)
     # all_data['NumOfBed'] = all_data['NumOfBed'].apply(str)
@@ -536,73 +537,77 @@ def getting_new_train_test(all_data, n_train):
     return all_data, train, test
 
 
-def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_file_path):
+def convert_crawled_to_input_data(crawled_paths, out_train_file_path, out_test_file_path):
     from timeit import default_timer as timer
     start = timer()
     print("start convert_crawled_to_input_data ...")
-    crawled_data = pd.read_csv(crawled_path)
+
+    crawled_datas = pd.DataFrame()
+    for crawled_path in crawled_paths:
+        crawled_data = pd.read_csv(crawled_path)
+        crawled_datas = crawled_datas.append(crawled_data, ignore_index=True)
 
     # TEST all datatype of columns
     # print("INSPECT ALL COLUMNS'S DATATYPE")
     # for col in crawled_data.columns:
-    #     print("type of ", col, ": ", crawled_data[col].dtypes)
+    #     print("type of ", col, ": ", crawled_datas[col].dtypes)
 
     # todo: get each row of data to list
-    form_re = crawled_data["FormRE"].tolist()  # Loại Hình BĐS
-    province = crawled_data["Province"].tolist()  # Tỉnh Thành
-    floor_num = crawled_data["FloorNum"].tolist()  # Tầng Số
-    area = crawled_data["Area"].tolist()  # Diện Tích
-    height = crawled_data["Height"].tolist()  # Chiều Dài
-    width = crawled_data["Width"].tolist()  # Chiều Rộng
-    usable_area = crawled_data["UsableArea"].tolist()  # DTSD
-    front_length = crawled_data["FrontLength"].tolist()  # Mặt Tiền
-    back_side_length = crawled_data["BackSideLength"].tolist()  # Mặt Hậu
-    direction = crawled_data["Direction"].tolist()  # Hướng
-    balcony_direction = crawled_data["BalconyDirection"].tolist()  # Hướng Ban Công
-    corner = crawled_data["Corner"].tolist()  # Căn Góc
-    road_in_front = crawled_data["RoadInFront"].tolist()  # Đường Trước Nhà
-    juridical = crawled_data["Juridical"].tolist()  # Pháp Lý
-    num_of_bed = crawled_data["NumOfBed"].tolist()  # Số Phòng Ngủ
-    num_of_floor = crawled_data["NumOfFloor"].tolist()  # Số Tầng
-    num_of_toilet = crawled_data["NumOfToilet"].tolist()  # Số Nhà Vệ Sinh
-    construction_year = crawled_data["ConstructionYear"].tolist()  # Năm Xây Dựng
-    # status_of_re = crawled_data["StatusOfRE"].tolist()  # Tình Trạng BĐS
-    # characteristics_re = crawled_data["CharacteristicsRE"].tolist()  # Đặc Tính BĐS
-    is_owner = crawled_data["IsOwner"].tolist()  # Chính Chủ
-    furniture = crawled_data["Furniture"].tolist()  # Tình Trạng Nội Thất
-    terrace = crawled_data["Terrace"].tolist()  # Sân Thượng
-    car_parking = crawled_data["CarParking"].tolist()  # Chỗ Để Xe Hơi
-    dinning_room = crawled_data["DinningRoom"].tolist()  # Phòng Ăn
-    kitchen = crawled_data["Kitchen"].tolist()  # Nhà Bếp
-    air_cond = crawled_data["AirCond"].tolist()  # Điều Hòa
-    adsl = crawled_data["ADSL"].tolist()  # ADSL
-    washing_machine = crawled_data["WashingMachine"].tolist()  # Máy Giặt
-    balcony = crawled_data["Balcony"].tolist()  # Ban Công
-    fridge = crawled_data["Fridge"].tolist()  # Tủ Lạnh
-    wifi = crawled_data["Wifi"].tolist()  # Wifi
-    pool = crawled_data["Pool"].tolist()  # Pool
-    basement = crawled_data["Basement"].tolist()  # Tầng Hầm
-    park = crawled_data["Park"].tolist()  # Công Viên
-    super_market = crawled_data["SuperMarket"].tolist()  # Siêu Thị
-    clinics = crawled_data["Clinics"].tolist()  # Trạm Xá
-    sea = crawled_data["Sea"].tolist()  # Biển
-    hospital = crawled_data["Hospital"].tolist()  # Bệnh Viện
-    church = crawled_data["Church"].tolist()  # Nhà Thờ
-    bus_station = crawled_data["BusStation"].tolist()  # Bến Xe Buýt
-    school = crawled_data["School"].tolist()  # Trường Học
-    temple = crawled_data["Temple"].tolist()  # Chùa
-    airport = crawled_data["Airport"].tolist()  # Sân Bay
-    pre_school = crawled_data["Preschool"].tolist()  # Trường Mầm Non
-    characteristics = crawled_data["Characteristics"].tolist()  # Đặc Tính
-    # price_psm = crawled_data["PricePSM"].tolist()  # Giá / m2
-    price = crawled_data["Price"].tolist()  # Giá
+    form_re = crawled_datas["FormRE"].tolist()  # Loại Hình BĐS
+    province = crawled_datas["Province"].tolist()  # Tỉnh Thành
+    floor_num = crawled_datas["FloorNum"].tolist()  # Tầng Số
+    area = crawled_datas["Area"].tolist()  # Diện Tích
+    height = crawled_datas["Height"].tolist()  # Chiều Dài
+    width = crawled_datas["Width"].tolist()  # Chiều Rộng
+    usable_area = crawled_datas["UsableArea"].tolist()  # DTSD
+    front_length = crawled_datas["FrontLength"].tolist()  # Mặt Tiền
+    back_side_length = crawled_datas["BackSideLength"].tolist()  # Mặt Hậu
+    direction = crawled_datas["Direction"].tolist()  # Hướng
+    balcony_direction = crawled_datas["BalconyDirection"].tolist()  # Hướng Ban Công
+    corner = crawled_datas["Corner"].tolist()  # Căn Góc
+    road_in_front = crawled_datas["RoadInFront"].tolist()  # Đường Trước Nhà
+    juridical = crawled_datas["Juridical"].tolist()  # Pháp Lý
+    num_of_bed = crawled_datas["NumOfBed"].tolist()  # Số Phòng Ngủ
+    num_of_floor = crawled_datas["NumOfFloor"].tolist()  # Số Tầng
+    num_of_toilet = crawled_datas["NumOfToilet"].tolist()  # Số Nhà Vệ Sinh
+    construction_year = crawled_datas["ConstructionYear"].tolist()  # Năm Xây Dựng
+    # status_of_re = crawled_datas["StatusOfRE"].tolist()  # Tình Trạng BĐS
+    # characteristics_re = crawled_datas["CharacteristicsRE"].tolist()  # Đặc Tính BĐS
+    is_owner = crawled_datas["IsOwner"].tolist()  # Chính Chủ
+    furniture = crawled_datas["Furniture"].tolist()  # Tình Trạng Nội Thất
+    terrace = crawled_datas["Terrace"].tolist()  # Sân Thượng
+    car_parking = crawled_datas["CarParking"].tolist()  # Chỗ Để Xe Hơi
+    dinning_room = crawled_datas["DinningRoom"].tolist()  # Phòng Ăn
+    kitchen = crawled_datas["Kitchen"].tolist()  # Nhà Bếp
+    air_cond = crawled_datas["AirCond"].tolist()  # Điều Hòa
+    adsl = crawled_datas["ADSL"].tolist()  # ADSL
+    washing_machine = crawled_datas["WashingMachine"].tolist()  # Máy Giặt
+    balcony = crawled_datas["Balcony"].tolist()  # Ban Công
+    fridge = crawled_datas["Fridge"].tolist()  # Tủ Lạnh
+    wifi = crawled_datas["Wifi"].tolist()  # Wifi
+    pool = crawled_datas["Pool"].tolist()  # Pool
+    basement = crawled_datas["Basement"].tolist()  # Tầng Hầm
+    park = crawled_datas["Park"].tolist()  # Công Viên
+    super_market = crawled_datas["SuperMarket"].tolist()  # Siêu Thị
+    clinics = crawled_datas["Clinics"].tolist()  # Trạm Xá
+    sea = crawled_datas["Sea"].tolist()  # Biển
+    hospital = crawled_datas["Hospital"].tolist()  # Bệnh Viện
+    church = crawled_datas["Church"].tolist()  # Nhà Thờ
+    bus_station = crawled_datas["BusStation"].tolist()  # Bến Xe Buýt
+    school = crawled_datas["School"].tolist()  # Trường Học
+    temple = crawled_datas["Temple"].tolist()  # Chùa
+    airport = crawled_datas["Airport"].tolist()  # Sân Bay
+    pre_school = crawled_datas["Preschool"].tolist()  # Trường Mầm Non
+    characteristics = crawled_datas["Characteristics"].tolist()  # Đặc Tính
+    # price_psm = crawled_datas["PricePSM"].tolist()  # Giá / m2
+    price = crawled_datas["Price"].tolist()  # Giá
 
     # todo: create/reconstruct CSV file to train data
     train_file = open(out_train_file_path, "w", newline='', encoding='utf-8-sig')
     test_file = open(out_test_file_path, "w", newline='', encoding='utf-8-sig')
     train_writer = csv.writer(train_file)
     test_writer = csv.writer(test_file)
-    print("n records: ", crawled_data.shape[0])
+    print("n records: ", crawled_datas.shape[0])
     train_writer.writerow(["ID", "FormRE", "Province", "FloorNum", "Area", "Height", "Width", "UsableArea",
                            "FrontLength", "BackSideLength", "Direction", "BalconyDirection", "Corner", "RoadInFront",
                            "Juridical", "NumOfBed", "NumOfFloor", "NumOfToilet", "ConstructionYear", "IsOwner",
@@ -621,11 +626,11 @@ def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_fi
 
     import math
     id_rec = 0
-    for rec in range(crawled_data.shape[0]):
+    for rec in range(crawled_datas.shape[0]):
         # for rec in range(19000):
         # todo: drop all fields with Giá = nan
         if is_valid_record(width[rec], height[rec], area[rec], price[rec]):
-            if id_rec < crawled_data.shape[0] / 1.4:
+            if id_rec < crawled_datas.shape[0] / 1.2:
                 # if id_rec < 9000:
                 train_writer.writerow(
                     [id_rec + 1, form_re[rec], province[rec], floor_num[rec], area[rec], height[rec], width[rec],
@@ -653,6 +658,7 @@ def convert_crawled_to_input_data(crawled_path, out_train_file_path, out_test_fi
                      school[rec], temple[rec], airport[rec], pre_school[rec], characteristics[rec]])
 
             id_rec += 1
+    print("n records filtered: ", id_rec)
     train_file.close()
     test_file.close()
 

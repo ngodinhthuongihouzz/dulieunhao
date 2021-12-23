@@ -101,7 +101,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\input\train\train20211207_110259[train] - Copy.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\input\train\train20211207_110259[train].csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\input\train\train20211220_1.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
