@@ -79,6 +79,7 @@ class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
                 print("MemoryInfo: ", process.memory_info().rss / (1024 * 1024), "MB")  # in MB
                 print("MemoryInfo pagefile: ", process.memory_info().pagefile)
                 print("MemoryInfo peak_pagefile: ", process.memory_info().peak_pagefile)
+                print("MemoryInfo paged_pool: ", process.memory_info().paged_pool)
 
                 y_pred = instance.predict(X[holdout_index])
                 out_of_fold_predictions[holdout_index, i] = y_pred  # todo: break here to get output
