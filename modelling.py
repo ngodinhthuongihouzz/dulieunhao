@@ -76,7 +76,7 @@ class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
                 print("[DEBUG] X SZ=", sys.getsizeof(X[train_index]), ", y SZ=", sys.getsizeof(y[train_index]))
                 import os, psutil
                 process = psutil.Process(os.getpid())
-                print("MemoryInfo: ", process.memory_info().rss / (1024 * 1024), "MB")  # in MB
+                # print("MemoryInfo: ", process.memory_info().rss / (1024 * 1024), "MB")  # in MB
                 # print("MemoryInfo pagefile: ", process.memory_info().pagefile)
                 # print("MemoryInfo peak_pagefile: ", process.memory_info().peak_pagefile)
                 # print("MemoryInfo paged_pool: ", process.memory_info().paged_pool)
