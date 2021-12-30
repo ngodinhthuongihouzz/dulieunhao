@@ -71,9 +71,9 @@ class StackingAveragedModels(BaseEstimator, RegressorMixin, TransformerMixin):
                 # 1024*1024*1024)) GiB for an array with shape (63671, 63671) and data type float64
                 # https://stackoverflow.com/questions/57507832/unable-to-allocate-array-with-shape-and-data-type [TEST]
                 print("[DEBUG] ", i, ":", train_index, ":",  train_index.size, ":", holdout_index, ":", holdout_index.size)
-                import sys
-                print("[DEBUG] instance SZ=", sys.getsizeof(instance))
-                print("[DEBUG] X SZ=", sys.getsizeof(X[train_index]), ", y SZ=", sys.getsizeof(y[train_index]))
+                # import sys
+                # print("[DEBUG] instance SZ=", sys.getsizeof(instance))
+                # print("[DEBUG] X SZ=", sys.getsizeof(X[train_index]), ", y SZ=", sys.getsizeof(y[train_index]))
                 # import os, psutil
                 # process = psutil.Process(os.getpid())
                 # print("MemoryInfo: ", process.memory_info().rss / (1024 * 1024), "MB")  # in MB
